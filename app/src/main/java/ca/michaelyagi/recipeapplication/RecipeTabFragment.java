@@ -478,8 +478,28 @@ public class RecipeTabFragment extends Fragment {
 
         //Set user
         TextView userText = (TextView)svLayout.findViewById(R.id.detailUserTextView);
-        String userStr = "by " + recipeData.user;
+        final String userStr = recipeData.user;
+        Paint paint = new Paint();
+        paint.setARGB(125,125,125,125);
+        userText.setTextColor(Color.parseColor("#009688"));
+        userText.setPaintFlags( paint.getFlags());
         userText.setText(Html.fromHtml(userStr));
+
+        userText.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                //Pass tag keyword to BrowseActivity with args
+                Bundle args = new Bundle();
+                args.putBoolean("viewbyuser_filter", true);
+                args.putString("user",userStr);
+
+                fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
+                BrowseFragment browseRecipeFragment = new BrowseFragment();
+                browseRecipeFragment.setArguments(args);
+                fragmentTransaction.replace(R.id.content_frame, browseRecipeFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
 
         //Set the ingredients list
         Iterator<IngredientData> ingredientIt = recipeData.ingredientList.iterator();
@@ -591,9 +611,6 @@ public class RecipeTabFragment extends Fragment {
                 final String tagObjStr = tagIt.next();
 
                 tagText = new TextView(super.getActivity().getApplicationContext());
-
-                Paint paint = new Paint();
-                paint.setARGB(125,125,125,125);
                 tagText.setTextColor(Color.parseColor("#009688"));
                 tagText.setPaintFlags( paint.getFlags());
 

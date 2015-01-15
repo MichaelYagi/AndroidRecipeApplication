@@ -90,10 +90,10 @@ public class BrowseFragment extends Fragment {
         // Get recipe list based on arguments passed
         /******************************************************************/
         //Get recipes by user logged in
-        if (getArguments() != null && getArguments().getBoolean("viewbyuser_filter")) {
-            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("My Recipes");
-            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
-        } else if (getArguments() != null && getArguments().getBoolean("viewbytag_filter") && getArguments().getString("keyword").length() > 0) {
+        if (getArguments() != null && getArguments().getString("user") != null && getArguments().getBoolean("viewbyuser_filter") && getArguments().getString("user").length() > 0) {
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("User Recipes");
+            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + getArguments().getString("user"));
+        } else if (getArguments() != null && getArguments().getString("keyword") != null && getArguments().getBoolean("viewbytag_filter") && getArguments().getString("keyword").length() > 0) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("keyword") + "\"");
             String tag = "";
             try {
@@ -103,16 +103,19 @@ public class BrowseFragment extends Fragment {
             }
             new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/tag/" + tag);
             //Get recipes by search term
-        } else if (getArguments() != null && getArguments().getBoolean("viewbysearch_filter") && getArguments().getString("searchterm").length() > 0) {
-            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("searchterm") + "\"");
+        } else if (getArguments() != null && getArguments().getString("searchterm") != null && getArguments().getBoolean("viewbysearch_filter") && getArguments().getString("searchterm").length() > 0) {
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("searchterm") + "\"");
             String searchTerm = "";
             try {
                 searchTerm = URLEncoder.encode(getArguments().getString("searchterm"), "utf-8");
-            } catch(UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException e) {
                 //TODO: Catch URLEncoder exception
             }
-            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "5/api/v1/json/recipesByType/search/" + searchTerm);
-            //Get all recipes
+            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/search/" + searchTerm);
+        } else if (getArguments() != null && getArguments().getBoolean("viewbyuser_filter")) {
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("My Recipes");
+            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
+        //Get all recipes
         } else {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Browse");
             new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipes");
@@ -203,7 +206,6 @@ public class BrowseFragment extends Fragment {
         protected void onPostExecute(String result) {
             //Result is responseString from request
             super.onPostExecute(result);
-
             if (result != null && result.length() > 0) {
                 try {
                     //Turn response into JSON object
