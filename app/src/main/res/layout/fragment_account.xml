@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".LoginActivity">
+    <EditText
+        android:id="@+id/account_email"
+        android:hint="Email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_above="@+id/account_password"
+        android:layout_alignLeft="@+id/account_password"
+        android:layout_alignStart="@+id/account_password"
+        android:layout_alignRight="@+id/account_password"
+        android:layout_alignEnd="@+id/account_password" />
+    <EditText
+        android:id="@+id/account_password"
+        android:hint="Password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:layout_above="@+id/account_passwordConfirm"
+        android:layout_alignLeft="@+id/account_passwordConfirm"
+        android:layout_alignStart="@+id/account_passwordConfirm"
+        android:layout_alignRight="@+id/account_passwordConfirm"
+        android:layout_alignEnd="@+id/account_passwordConfirm" />
+    />
+    <EditText
+        android:id="@+id/account_passwordConfirm"
+        android:hint="Password Confirmation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:layout_above="@+id/account_button"
+        android:layout_alignRight="@+id/account_button"
+        android:layout_alignEnd="@+id/account_button"
+        android:layout_alignLeft="@+id/account_button"
+        android:layout_alignStart="@+id/account_button" />
+    />
+    <Button
+        android:id="@+id/account_button"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:onClick="onClickAccount"
+        android:text="@string/account_button"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

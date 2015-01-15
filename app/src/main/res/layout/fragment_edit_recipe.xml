@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/recipe_title"
+            android:hint="Title"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:layout_width="match_parent"
+            android:layout_above="@+id/recipe_images"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:id="@+id/recipe_images"
+            android:layout_above="@+id/recipe_add_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </LinearLayout>
+        <Button
+            android:id="@+id/recipe_add_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/recipe_ingredients"
+            android:onClick="onClickAddImage"
+            android:text="Add Image"
+            android:layout_marginBottom="15dp" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recipe_ingredients"
+            android:layout_above="@+id/recipe_add_ingredient_button" >
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/recipe_ingredients_1"
+                android:tag="recipe_ingredients_1"
+                android:weightSum="1">
+                <EditText
+                    android:id="@+id/recipe_amount_1"
+                    android:tag="recipe_amount_1"
+                    android:hint="Amount"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/recipe_unit_1"
+                    android:tag="recipe_unit_1"
+                    android:hint="Unit"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/recipe_ingredient_1"
+                    android:tag="recipe_ingredient_1"
+                    android:hint="Ingredient"
+                    android:singleLine="true"
+                    android:scrollHorizontally="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/recipe_add_ingredient_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickAddIngredient"
+            android:text="@string/add_button"
+            android:layout_marginBottom="15dp"
+            android:layout_above="@+id/recipe_steps"
+            android:layout_alignLeft="@+id/recipe_add_step_button"
+            android:layout_alignStart="@+id/recipe_add_step_button" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recipe_steps"
+            android:layout_above="@+id/recipe_add_step_button"
+            >
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/recipe_steps_1"
+                android:tag="recipe_steps_1" >
+                <EditText
+                    android:id="@+id/recipe_step_1"
+                    android:tag="recipe_step_1"
+                    android:hint="Step"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/recipe_add_step_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClickAddStep"
+            android:layout_above="@+id/recipe_serves"
+            android:layout_marginBottom="15dp"
+            android:text="@string/add_button"
+            android:layout_alignLeft="@+id/recipe_cook"
+            android:layout_alignStart="@+id/recipe_cook" />
+
+        <EditText
+            android:id="@+id/recipe_serves"
+            android:hint="Serves"
+            android:inputType="number"
+            android:singleLine="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_above="@+id/recipe_prep"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/recipe_steps" />
+
+        <EditText
+            android:id="@+id/recipe_prep"
+            android:hint="Prep Time"
+            android:singleLine="true"
+            android:layout_width="151dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_above="@+id/recipe_cook"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:id="@+id/recipe_cook"
+            android:hint="Cooking Time"
+            android:singleLine="true"
+            android:layout_width="148dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:inputType="textCapSentences"
+            android:layout_above="@+id/tags"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <MultiAutoCompleteTextView
+            android:id="@+id/recipe_tags"
+            android:hint="Comma separated tags"
+            android:singleLine="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_above="@+id/save_recipe"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:id="@+id/save_recipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/account_button"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+        android:layout_marginBottom="66dp" />
+
+    </LinearLayout>
+</ScrollView>

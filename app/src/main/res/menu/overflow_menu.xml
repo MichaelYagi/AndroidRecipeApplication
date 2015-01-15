@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menu_login"
+        android:title="@string/login_button"
+        android:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/menu_register"
+        android:title="@string/register_button"
+        android:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/menu_edit"
+        android:title="@string/menu_edit"
+        android:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/menu_delete"
+        android:title="@string/menu_delete"
+        android:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/menu_logout"
+        android:title="@string/menu_logout"
+        android:showAsAction="ifRoom|withText"/>
+</menu>

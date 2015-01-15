@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Recipe Book</string>
+    <string name="detail_activity">Recipe</string>
+    <string name="drawer_activity">Recipe Book</string>
+    <string name="open_drawer">Open Drawer</string>
+    <string name="close_drawer">Close Drawer</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="forgot_email_button">Email</string>
+    <string name="login_button">Login</string>
+    <string name="menu_logout">Logout</string>
+    <string name="register_button">Register</string>
+    <string name="forgot_button">Forgot Login</string>
+    <string name="recover_button">Recover Account</string>
+    <string name="account_button">Update</string>
+    <string name="menu_edit">Edit Recipe</string>
+    <string name="menu_delete">Delete Recipe</string>
+    <string name="add_button">Add</string>
+    <string name="search">Search</string>
+
+</resources>

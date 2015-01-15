@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_item_search"
+        app:showAsAction="always|collapseActionView"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search Recipes"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item
+        android:id="@+id/menu_item_share"
+        android:icon="@android:drawable/ic_menu_share"
+        app:showAsAction="always"
+        android:title="Share Recipe"
+        android:actionProviderClass= "android.widget.ShareActionProvider" />
+    <item
+        android:id="@+id/menu_item_delete_images"
+        android:icon="@android:drawable/ic_menu_delete"
+        app:showAsAction="always"
+        android:title="Delete Images"
+        android:actionProviderClass= "android.widget.ShareActionProvider" />
+</menu>

@@ -1,0 +1,564 @@
+package ca.michaelyagi.recipeapplication;
+
+/******************************************************************/
+// Browse all recipes, by user or by tag
+/******************************************************************/
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Created by Michael on 12/27/2014.
+ */
+public class BrowseFragment extends Fragment {
+    ListView browseListView ;
+    BrowseAdapter listAdapter;
+    // Create and populate a List of recipes
+    List<RecipeListData> recipeList = new ArrayList<RecipeListData>();
+
+
+    private RelativeLayout        llLayout;
+    private boolean popNext = false;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        llLayout    = (RelativeLayout)    inflater.inflate(R.layout.fragment_browse, container, false);
+
+        //Find the ListView
+        browseListView = (ListView) llLayout.findViewById( R.id.browseListView );
+
+        //Clear the recipe list
+        recipeList.clear();
+
+        //Create ArrayAdapter of RecipeList
+        listAdapter = new BrowseAdapter(super.getActivity(),R.layout.browse_recipe_row,recipeList);
+
+        // Set the ArrayAdapter as the ListView's adapter.
+        browseListView.setAdapter( listAdapter );
+
+        /******************************************************************/
+        // Get recipe list based on arguments passed
+        /******************************************************************/
+        //Get recipes by user logged in
+        if (getArguments() != null && getArguments().getBoolean("viewbyuser_filter")) {
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("My Recipes");
+            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
+        } else if (getArguments() != null && getArguments().getBoolean("viewbytag_filter") && getArguments().getString("keyword").length() > 0) {
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("keyword") + "\"");
+            String tag = "";
+            try {
+                tag = URLEncoder.encode(getArguments().getString("keyword"), "utf-8");
+            } catch(UnsupportedEncodingException e) {
+                //TODO: Catch URLEncoder exception
+            }
+            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/tag/" + tag);
+            //Get recipes by search term
+        } else if (getArguments() != null && getArguments().getBoolean("viewbysearch_filter") && getArguments().getString("searchterm").length() > 0) {
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("searchterm") + "\"");
+            String searchTerm = "";
+            try {
+                searchTerm = URLEncoder.encode(getArguments().getString("searchterm"), "utf-8");
+            } catch(UnsupportedEncodingException e) {
+                //TODO: Catch URLEncoder exception
+            }
+            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "5/api/v1/json/recipesByType/search/" + searchTerm);
+            //Get all recipes
+        } else {
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Browse");
+            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipes");
+        }
+
+        //On click listener when user clicks on a browse item
+        browseListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+                //Get Data at position selected
+                RecipeListData recipeData = (RecipeListData)parent.getItemAtPosition(position);
+
+                FragmentManager fragmentManager = getFragmentManager();
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                DetailFragment detailRecipeFragment = new DetailFragment();
+
+                Bundle args = new Bundle();
+                args.putInt("recipe_id", recipeData.getId());
+                args.putString("recipe_title",recipeData.getTitle());
+                args.putString("recipe_user",recipeData.getUser());
+                detailRecipeFragment.setArguments(args);
+
+                fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
+        return llLayout;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    /******************************************************************/
+    // AsyncTasks
+    /******************************************************************/
+    //Request the list of recipes
+    class RequestBrowseTask extends AsyncTask<String, String, String>{
+
+        private ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            dialog = Utils.createProgressDialog(getActivity());
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... uri) {
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpResponse response;
+            String responseString = null;
+            try {
+                response = httpclient.execute(new HttpGet(uri[0]));
+                StatusLine statusLine = response.getStatusLine();
+                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+                    responseString = out.toString();
+                } else{
+                    //Closes the connection.
+                    response.getEntity().getContent().close();
+                    throw new IOException(statusLine.getReasonPhrase());
+                }
+            } catch (IOException e) {
+                //TODO Handle problems..
+            }
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //Result is responseString from request
+            super.onPostExecute(result);
+
+            if (result != null && result.length() > 0) {
+                try {
+                    //Turn response into JSON object
+                    JSONObject jsonObj = new JSONObject(result);
+
+                    //Get all keys of JSON object
+                    Iterator keys = jsonObj.keys();
+
+                    listAdapter.clear();
+                    recipeList.clear();
+
+                    //If request was successful
+                    if (jsonObj.getString("retval").equals("1") && jsonObj.getString("message").equals("Success")) {
+                        int counter = 0;
+                        if (jsonObj.has("id")) {
+                            RecipeListData d = new RecipeListData();
+                            Integer recipeId = Integer.parseInt(jsonObj.get("id").toString());
+                            d.setId(recipeId);
+                            d.setTitle(jsonObj.get("title").toString());
+                            d.setUser(jsonObj.get("user").toString());
+                            Integer serves = Integer.parseInt(jsonObj.get("serves").toString());
+                            d.setServes(serves);
+                            d.setCookTime(jsonObj.get("cook_time").toString());
+                            d.setPrepTime(jsonObj.get("prep_time").toString());
+                            listAdapter.add(d);
+
+                            if (jsonObj.get("image_id") != null && !jsonObj.get("image_id").toString().isEmpty()) {
+                                String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonObj.get("image_id").toString();
+                                if (jsonObj.get("extension") != null && !jsonObj.get("extension").toString().isEmpty()) {
+                                    imageUrl = imageUrl + "." + jsonObj.get("extension").toString();
+                                }
+
+                                //Call AsyncTask to convert Url to Bmp, pass json object
+                                new DownloadImageTask(d).execute(imageUrl);
+
+                            }
+
+                            listAdapter.add(d);
+                        } else {
+                            String tempKey = "";
+
+                            //Loop through objects by key
+                            while (keys.hasNext()) {
+                                tempKey = keys.next().toString();
+
+                                //Don't include the retval or message objects
+                                if (!tempKey.equals("retval") && !tempKey.equals("message")) {
+                                    RecipeListData d = new RecipeListData();
+
+                                    JSONObject recipeObj = new JSONObject(jsonObj.get(tempKey).toString());
+
+                                    Integer recipeId = Integer.parseInt(recipeObj.get("id").toString());
+                                    d.setId(recipeId);
+                                    d.setTitle(recipeObj.get("title").toString());
+                                    d.setUser(recipeObj.get("user").toString());
+                                    Integer serves = Integer.parseInt(recipeObj.get("serves").toString());
+                                    d.setServes(serves);
+                                    d.setCookTime(recipeObj.get("cook_time").toString());
+                                    d.setPrepTime(recipeObj.get("prep_time").toString());
+                                    listAdapter.add(d);
+
+                                    if (!recipeObj.get("image_id").toString().equals("null") && !recipeObj.get("image_id").toString().isEmpty()) {
+
+                                        String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + recipeObj.get("image_id").toString();
+                                        if (recipeObj.get("extension").toString() != null && !recipeObj.get("extension").toString().isEmpty()) {
+                                            imageUrl = imageUrl + "." + recipeObj.get("extension").toString();
+                                        }
+
+                                        //Call AsyncTask to convert Url to Bmp, pass json object
+                                        new DownloadImageTask(d).execute(imageUrl);
+
+                                    }
+
+
+                                }
+                            }
+                        }
+
+                    } else {
+                        Toast.makeText(llLayout.getContext(), "No Recipes...", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    //TODO
+                }
+            } else {
+                Toast.makeText(llLayout.getContext(), "Connection Error...", Toast.LENGTH_SHORT).show();
+                Utils.reconnectDialog(getActivity());
+            }
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+    }
+
+    //Download images for a recipe
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        RecipeListData recipeListData;
+        String imageUrl;
+
+        public DownloadImageTask(RecipeListData d) {
+            this.recipeListData = d;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            imageUrl = urls[0];
+            Bitmap imageBmp = null;
+            try {
+                InputStream in = new java.net.URL(imageUrl).openStream();
+                imageBmp = BitmapFactory.decodeStream(in);
+            } catch (MalformedURLException e) {
+                try {
+                    File file = new File(imageUrl);
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    imageBmp = BitmapFactory.decodeStream(fileInputStream);
+                } catch(FileNotFoundException f) {
+                    System.out.println("File not found:" + f.toString());
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return imageBmp;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            recipeListData.setImage(result);
+            listAdapter.remove(recipeListData);
+            listAdapter.add(recipeListData);
+        }
+    }
+
+    /******************************************************************/
+    // Classes
+    /******************************************************************/
+    public class SquareImageView extends ImageView {
+        public SquareImageView(Context context) {
+            super(context);
+        }
+
+        public SquareImageView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        public SquareImageView(Context context, AttributeSet attrs, int defStyle) {
+            super(context, attrs, defStyle);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+
+            int width = getMeasuredWidth();
+            setMeasuredDimension(width, width);
+        }
+
+        @Override
+        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+            super.onSizeChanged(w, h, oldw, oldh);
+
+            if (getLayoutParams() != null && w != h) {
+                getLayoutParams().height = w;
+                setLayoutParams(getLayoutParams());
+            }
+        }
+    }
+
+    public class BrowseAdapter extends ArrayAdapter<RecipeListData> {
+        private final Context context;
+        private final List<RecipeListData> data;
+        private final int layoutResourceId;
+
+        public BrowseAdapter(Context context, int layoutResourceId, List<RecipeListData> data) {
+            super(context, layoutResourceId, data);
+            this.context = context;
+            this.data = data;
+            this.layoutResourceId = layoutResourceId;
+        }
+
+        private class ViewHolder {
+            ImageView image;
+            TextView titleText;
+            TextView userText;
+            TextView prepText;
+            TextView cookText;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            RecipeListData rowItem = getItem(position);
+
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.browse_recipe_row, null);
+                holder = new ViewHolder();
+                holder.titleText = (TextView) convertView.findViewById(R.id.rowTitle);
+                holder.userText = (TextView) convertView.findViewById(R.id.rowUser);
+                holder.prepText = (TextView) convertView.findViewById(R.id.prepTime);
+                holder.cookText = (TextView) convertView.findViewById(R.id.cookTime);
+                holder.image = (ImageView) convertView.findViewById(R.id.rowImage);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.titleText.setText(rowItem.getTitle());
+            holder.userText.setText(rowItem.getUser());
+
+            if((rowItem.getPrepTime() != null && !rowItem.getPrepTime().isEmpty()) && !rowItem.getPrepTime().equals("00:00:00")) {
+                String prep = rowItem.getPrepTime();
+                prep = prep.substring(0, prep.length() - 3);
+                holder.prepText.setText(prep);
+            }
+
+            if((rowItem.getCookTime() != null && !rowItem.getCookTime().isEmpty()) && !rowItem.getCookTime().equals("00:00:00")) {
+                String cook = rowItem.getCookTime();
+                cook = cook.substring(0, cook.length() - 3);
+                holder.cookText.setText(cook);
+            }
+
+            if (rowItem.getImage() == null) {
+                char firstCharacterTitle = rowItem.getTitle().toUpperCase().charAt(0);
+                int color = ColorGenerator.DEFAULT.getColor(firstCharacterTitle);
+                CharacterDrawable drawable = new CharacterDrawable(firstCharacterTitle, color);
+                holder.image.setImageDrawable(drawable);
+            } else {
+                holder.image.setImageBitmap(rowItem.getImage());
+            }
+
+            return convertView;
+        }
+
+    }
+
+    public class CharacterDrawable extends ColorDrawable {
+
+        private final char character;
+        private final Paint textPaint;
+        private final Paint borderPaint;
+        private static final int STROKE_WIDTH = 10;
+        private static final float SHADE_FACTOR = 0.9f;
+
+        public CharacterDrawable(char character, int color) {
+            super(color);
+            this.character = character;
+            this.textPaint = new Paint();
+            this.borderPaint = new Paint();
+
+            // text paint settings
+            textPaint.setColor(Color.WHITE);
+            textPaint.setAntiAlias(true);
+            textPaint.setFakeBoldText(true);
+            textPaint.setStyle(Paint.Style.FILL);
+            textPaint.setTextAlign(Paint.Align.CENTER);
+
+            // border paint settings
+            borderPaint.setColor(getDarkerShade(color));
+            borderPaint.setStyle(Paint.Style.STROKE);
+            borderPaint.setStrokeWidth(STROKE_WIDTH);
+        }
+
+        private int getDarkerShade(int color) {
+            return Color.rgb((int)(SHADE_FACTOR * Color.red(color)),
+                    (int)(SHADE_FACTOR * Color.green(color)),
+                    (int)(SHADE_FACTOR * Color.blue(color)));
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            super.draw(canvas);
+
+
+            // draw border
+            canvas.drawRect(getBounds(), borderPaint);
+
+            // draw text
+            int width = canvas.getWidth();
+            int height = canvas.getHeight();
+            textPaint.setTextSize(height / 2);
+            canvas.drawText(String.valueOf(character), width/2, height/2 - ((textPaint.descent() + textPaint.ascent()) / 2) , textPaint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            textPaint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter cf) {
+            textPaint.setColorFilter(cf);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
+    }
+
+    class RecipeListData {
+        private int id;
+        private String title;
+        private String user;
+        private Bitmap image;
+        private int serves;
+        private String prepTime;
+        private String cookTime;
+
+        @Override
+        public String toString() {
+            return this.title;
+        }
+
+        public int getId() {
+            return this.id;
+        }
+
+        public String getTitle() {
+            return this.title;
+        }
+
+        public String getUser() { return this.user; }
+
+        public Bitmap getImage() { return this.image; }
+
+        public int getServes() { return this.serves; }
+
+        public String getPrepTime() { return this.prepTime; }
+
+        public String getCookTime() { return this.cookTime; }
+
+        public void setId(int anId) {
+            this.id = anId;
+        }
+
+        public void setTitle(String aTitle) {
+            this.title = aTitle;
+        }
+
+        public void setUser(String aUser) {
+            this.user = aUser;
+        }
+
+        public void setImage(Bitmap aImage) {
+            this.image = aImage;
+        }
+
+        public void setServes(int aServes) {
+            this.serves = aServes;
+        }
+
+        public void setPrepTime(String aPrepTime) { this.prepTime = aPrepTime; }
+
+        public void setCookTime(String aCookTime) { this.cookTime = aCookTime; }
+    }
+}

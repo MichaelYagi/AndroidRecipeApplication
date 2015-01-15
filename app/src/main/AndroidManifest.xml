@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ca.michaelyagi.recipeapplication" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <application
+        android:name="ca.michaelyagi.recipeapplication.RecipeBookApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:logo="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="ca.michaelyagi.recipeapplication.DrawerActivity"
+            android:label="@string/drawer_activity"
+            android:icon="@drawable/ic_launcher"
+            android:logo="@drawable/ic_launcher"
+            android:theme="@style/AppTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        <fragment
+            android:name=".BrowseFragment"
+            android:label="@string/app_name" >
+        </fragment>
+        <fragment
+            android:name=".LoginFragment"
+            android:label="@string/login_button" >
+        </fragment>
+        <fragment
+            android:name=".DetailFragment"
+            android:label="@string/detail_activity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".BrowseFragment" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BrowseFragment" />
+        </fragment>
+    </application>
+
+</manifest>
