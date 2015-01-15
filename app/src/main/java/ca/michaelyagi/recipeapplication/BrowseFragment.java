@@ -392,6 +392,7 @@ public class BrowseFragment extends Fragment {
             ImageView image;
             TextView titleText;
             TextView userText;
+            TextView servesText;
             TextView prepText;
             TextView cookText;
         }
@@ -408,6 +409,7 @@ public class BrowseFragment extends Fragment {
                 holder.titleText = (TextView) convertView.findViewById(R.id.rowTitle);
                 holder.userText = (TextView) convertView.findViewById(R.id.rowUser);
                 holder.prepText = (TextView) convertView.findViewById(R.id.prepTime);
+                holder.servesText = (TextView) convertView.findViewById(R.id.serves);
                 holder.cookText = (TextView) convertView.findViewById(R.id.cookTime);
                 holder.image = (ImageView) convertView.findViewById(R.id.rowImage);
                 convertView.setTag(holder);
@@ -417,6 +419,11 @@ public class BrowseFragment extends Fragment {
 
             holder.titleText.setText(rowItem.getTitle());
             holder.userText.setText(rowItem.getUser());
+
+            if(rowItem.getServes() > 0) {
+                String serves = Integer.toString(rowItem.getServes());
+                holder.servesText.setText(serves);
+            }
 
             if((rowItem.getPrepTime() != null && !rowItem.getPrepTime().isEmpty()) && !rowItem.getPrepTime().equals("00:00:00")) {
                 String prep = rowItem.getPrepTime();
