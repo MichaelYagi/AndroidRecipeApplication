@@ -5,6 +5,7 @@ package ca.michaelyagi.recipeapplication;
 /******************************************************************/
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -162,18 +164,25 @@ public class RegisterFragment extends Fragment {
                     Iterator keys = jsonObj.keys();
 
                     //If request was successful
-                    if (jsonObj.getString("retval").length() > 0 && Integer.getInteger(jsonObj.getString("retval")) > 0) {
+                    if (jsonObj.getString("retval").length() > 0 && Integer.parseInt(jsonObj.getString("retval")) > 0) {
                         if (dialog.isShowing()) {
                             dialog.dismiss();
                         }
 
-                        int userId = Integer.getInteger(jsonObj.getString("retval"));
+                        int userId = Integer.parseInt(jsonObj.getString("retval"));
 
                         //Store username password
                         SaveSharedPreference.setUsername(RecipeBookApplication.getAppContext(), username);
                         SaveSharedPreference.setPassword(RecipeBookApplication.getAppContext(), password);
                         SaveSharedPreference.setEmail(RecipeBookApplication.getAppContext(),email);
                         SaveSharedPreference.setUserID(RecipeBookApplication.getAppContext(),userId);
+
+                        //Hide keyboard after input
+                        View target = getView().findFocus();
+                        if (target != null) {
+                            InputMethodManager imm = (InputMethodManager) target.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(target.getWindowToken(), 0);
+                        }
 
                         Toast.makeText(llLayout.getContext(), "Logging in...", Toast.LENGTH_SHORT).show();
 
