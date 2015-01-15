@@ -162,14 +162,18 @@ public class RegisterFragment extends Fragment {
                     Iterator keys = jsonObj.keys();
 
                     //If request was successful
-                    if (jsonObj.getString("retval").equals("1")) {
+                    if (jsonObj.getString("retval").length() > 0 && Integer.getInteger(jsonObj.getString("retval")) > 0) {
                         if (dialog.isShowing()) {
                             dialog.dismiss();
                         }
 
+                        int userId = Integer.getInteger(jsonObj.getString("retval"));
+
                         //Store username password
                         SaveSharedPreference.setUsername(RecipeBookApplication.getAppContext(), username);
                         SaveSharedPreference.setPassword(RecipeBookApplication.getAppContext(), password);
+                        SaveSharedPreference.setEmail(RecipeBookApplication.getAppContext(),email);
+                        SaveSharedPreference.setUserID(RecipeBookApplication.getAppContext(),userId);
 
                         Toast.makeText(llLayout.getContext(), "Logging in...", Toast.LENGTH_SHORT).show();
 
