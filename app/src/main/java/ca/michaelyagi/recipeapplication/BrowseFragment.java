@@ -207,6 +207,7 @@ public class BrowseFragment extends Fragment {
             //Result is responseString from request
             super.onPostExecute(result);
             if (result != null && result.length() > 0) {
+                int counter = 0;
                 try {
                     //Turn response into JSON object
                     JSONObject jsonObj = new JSONObject(result);
@@ -219,7 +220,6 @@ public class BrowseFragment extends Fragment {
 
                     //If request was successful
                     if (jsonObj.getString("retval").equals("1") && jsonObj.getString("message").equals("Success")) {
-                        int counter = 0;
                         if (jsonObj.has("id")) {
                             RecipeListData d = new RecipeListData();
                             Integer recipeId = Integer.parseInt(jsonObj.get("id").toString());
@@ -239,7 +239,7 @@ public class BrowseFragment extends Fragment {
                                 }
 
                                 //Call AsyncTask to convert Url to Bmp, pass json object
-                                new DownloadImageTask(d).execute(imageUrl);
+                                new DownloadImageTask(counter,d).execute(imageUrl);
 
                             }
 
@@ -274,11 +274,11 @@ public class BrowseFragment extends Fragment {
                                         }
 
                                         //Call AsyncTask to convert Url to Bmp, pass json object
-                                        new DownloadImageTask(d).execute(imageUrl);
+                                        new DownloadImageTask(counter,d).execute(imageUrl);
 
                                     }
 
-
+                                    counter++;
                                 }
                             }
                         }
@@ -306,8 +306,10 @@ public class BrowseFragment extends Fragment {
 
         RecipeListData recipeListData;
         String imageUrl;
+        int count;
 
-        public DownloadImageTask(RecipeListData d) {
+        public DownloadImageTask(int count, RecipeListData d) {
+            this.count = count;
             this.recipeListData = d;
         }
 
@@ -335,7 +337,7 @@ public class BrowseFragment extends Fragment {
         protected void onPostExecute(Bitmap result) {
             recipeListData.setImage(result);
             listAdapter.remove(recipeListData);
-            listAdapter.add(recipeListData);
+            listAdapter.insert(recipeListData,count);
         }
     }
 
