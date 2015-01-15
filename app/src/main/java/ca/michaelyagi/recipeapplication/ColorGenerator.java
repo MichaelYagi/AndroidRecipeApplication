@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by Michael on 1/14/2015.
+ * @author amulya
+ * @datetime 14 Oct 2014, 5:20 PM
+ * https://github.com/amulyakhare/TextDrawable/blob/master/library/src/main/java/com/amulyakhare/textdrawable/util/ColorGenerator.java
  */
 public class ColorGenerator {
 
