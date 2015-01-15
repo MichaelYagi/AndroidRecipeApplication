@@ -1446,7 +1446,7 @@ public class EditRecipeFragment extends Fragment {
         removeButton.setTag("recipe_image_remove_" + imageCounter);
         removeButton.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
-        removeButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_delete, 0, 0, 0);
+        removeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_cancel, 0, 0, 0);
         removeButton.setPadding(0, 0, 0, 0);
         newll.addView(removeButton);
 
@@ -1548,7 +1548,7 @@ public class EditRecipeFragment extends Fragment {
         removeButton.setTag("recipe_ingredient_remove_" + ingredientCounter);
         removeButton.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
-        removeButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_delete, 0, 0, 0);
+        removeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_cancel, 0, 0, 0);
         LinearLayout.LayoutParams bparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         bparams.setMargins(-120,0,-120,0);
         removeButton.setLayoutParams(bparams);
@@ -1631,7 +1631,7 @@ public class EditRecipeFragment extends Fragment {
         removeButton.setTag("recipe_step_remove_" + stepCounter);
         removeButton.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
-        removeButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_delete, 0, 0, 0);
+        removeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_cancel, 0, 0, 0);
         LinearLayout.LayoutParams bparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         bparams.setMargins(-120,0,-120,0);
         removeButton.setLayoutParams(bparams);
