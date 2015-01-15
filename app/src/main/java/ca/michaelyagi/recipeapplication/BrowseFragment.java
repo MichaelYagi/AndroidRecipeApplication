@@ -243,7 +243,6 @@ public class BrowseFragment extends Fragment {
 
                             }
 
-                            listAdapter.add(d);
                         } else {
                             String tempKey = "";
 
