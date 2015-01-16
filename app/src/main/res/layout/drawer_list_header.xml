@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@color/material_blue_grey_800">
     <RelativeLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
         android:layout_height="80dp" >
         <TextView
             android:id="@+id/header_user"
@@ -21,6 +23,7 @@
             android:id="@+id/header_email"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
             android:textColor="#FFFFFF"
             android:layout_alignParentBottom="true"
