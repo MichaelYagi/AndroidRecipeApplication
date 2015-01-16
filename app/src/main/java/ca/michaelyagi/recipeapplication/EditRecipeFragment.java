@@ -1144,6 +1144,9 @@ public class EditRecipeFragment extends Fragment {
         int counter;
 
         try {
+            //user_id
+            jsonRecipeObj.put("user_id", SaveSharedPreference.getUserID(RecipeBookApplication.getAppContext()));
+
             //user
             jsonRecipeObj.put("user", recipeUser);
 
