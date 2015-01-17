@@ -420,7 +420,7 @@ public class DetailFragment extends Fragment {
                                         }
                                     }
                                     break;
-                                case "image_urls":
+                                case "images_info":
                                     JSONArray imageInfo;
 
                                     if (jsonObj.get(tempKey) instanceof JSONObject) {

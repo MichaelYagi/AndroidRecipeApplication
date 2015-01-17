@@ -350,7 +350,7 @@ public class RecipeImagesTabFragment extends Fragment {
                                     recipeImagesData.title = jsonObj.get(tempKey).toString();
                                     recipeTitle = jsonObj.get(tempKey).toString();
                                     break;
-                                case "image_urls":
+                                case "images_info":
                                     JSONArray imageInfo;
 
                                     if (jsonObj.get(tempKey) instanceof JSONObject) {
