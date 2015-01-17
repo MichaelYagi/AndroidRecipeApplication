@@ -221,7 +221,7 @@ public class LoginFragment extends Fragment {
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                     } else {
-                        Toast.makeText(llLayout.getContext(), "Wrong Credentials",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(llLayout.getContext(), jsonObj.getString("message"),Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
