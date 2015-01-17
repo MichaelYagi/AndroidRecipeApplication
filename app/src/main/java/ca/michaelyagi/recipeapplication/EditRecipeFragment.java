@@ -571,17 +571,26 @@ public class EditRecipeFragment extends Fragment {
                                     }
                                     break;
                                 case "image_urls":
-                                    JSONArray urlList;
+                                    JSONArray imageInfo;
+
                                     if (jsonObj.get(tempKey) instanceof JSONObject) {
-                                        urlList = new JSONArray("[" + jsonObj.get(tempKey).toString() + "]");
+                                        imageInfo = new JSONArray("[" + jsonObj.get(tempKey).toString() + "]");
                                     } else if (jsonObj.get(tempKey) instanceof String) {
-                                        urlList = new JSONArray("['" + jsonObj.get(tempKey).toString() + "']");
+                                        imageInfo = new JSONArray("['" + jsonObj.get(tempKey).toString() + "']");
                                     } else {
-                                        urlList = new JSONArray(jsonObj.get(tempKey).toString());
+                                        imageInfo = new JSONArray(jsonObj.get(tempKey).toString());
                                     }
 
-                                    for (int i = 0; i < urlList.length(); i++) {
-                                        recipeData.imageUrlList.add(urlList.getString(i));
+                                    String imageUrl;
+                                    for (int i = 0; i < imageInfo.length(); i++) {
+                                        JSONObject jsonImageObj = new JSONObject(imageInfo.getString(i));
+
+                                        imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonImageObj.get("id").toString();
+                                        if (jsonImageObj.get("extension") != null && !jsonImageObj.get("extension").toString().isEmpty()) {
+                                            imageUrl = imageUrl + "." + jsonImageObj.get("extension").toString();
+                                        }
+
+                                        recipeData.imageUrlList.add(imageUrl);
                                     }
                                     break;
                             }
