@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -407,6 +408,8 @@ public class DrawerActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        drawerLayout.closeDrawer(drawerList);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -414,6 +417,7 @@ public class DrawerActivity extends ActionBarActivity {
         if (drawerToggle.onOptionsItemSelected(item)) {
             //Not logged in
             if (SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()).length() == 0) {
+
                 drawerItems.clear();
 
                 DrawerListData d = new DrawerListData();
@@ -465,18 +469,27 @@ public class DrawerActivity extends ActionBarActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_login:
+                LAST_DRAWER_HIGHLIGHT_POSITION = 2;
+                drawerList.setItemChecked(2, true);
+                drawerList.setSelection(2);
                 LoginFragment loginFragment = new LoginFragment();
                 fragmentTransaction.replace(R.id.content_frame, loginFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 return true;
             case R.id.menu_register:
+                LAST_DRAWER_HIGHLIGHT_POSITION = 3;
+                drawerList.setItemChecked(3, true);
+                drawerList.setSelection(3);
                 RegisterFragment registerFragment = new RegisterFragment();
                 fragmentTransaction.replace(R.id.content_frame, registerFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 return true;
             case R.id.menu_logout:
+                LAST_DRAWER_HIGHLIGHT_POSITION = 1;
+                drawerList.setItemChecked(1, true);
+                drawerList.setSelection(1);
                 Toast.makeText(this, "Logging Out...",Toast.LENGTH_SHORT).show();
                 SaveSharedPreference.clearCredentials(RecipeBookApplication.getAppContext());
 
