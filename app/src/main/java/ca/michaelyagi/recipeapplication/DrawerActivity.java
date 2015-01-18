@@ -10,6 +10,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.nsd.NsdManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -84,6 +85,8 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         Utils.setWebsiteUrl("myagi.asuscomm.com",9244);
 
         setContentView(R.layout.activity_drawer);
+        ActionBar bar = getSupportActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#012345")));
 
         //Initial drawer items
         DrawerListData d = new DrawerListData();
@@ -97,7 +100,6 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         drawerLayout.setDrawerListener(drawerToggle);
 
         drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         LAST_DRAWER_HIGHLIGHT_POSITION = 1;
         drawerList.setItemChecked(LAST_DRAWER_HIGHLIGHT_POSITION, true);
         drawerList.setSelection(LAST_DRAWER_HIGHLIGHT_POSITION);
@@ -185,117 +187,11 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
 
         drawerLayout.setDrawerListener(drawerToggle);
 
-
-        /******************************************************************/
-        // Actionbar search edit text
-        /******************************************************************/
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
-
-        /*
-        LayoutInflater inflator = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflator.inflate(R.layout.actionbar_search, null);
-        actionBar.setCustomView(v);
-
-        autoCompleteTextView = (AutoCompleteTextView) v.findViewById(R.id.search_box);
-
-        //Search actionbar dropdown item selection
-        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                clearKeyboard();
-                autoCompleteTextView.clearListSelection();
-                autoCompleteTextView.dismissDropDown();
-                autoCompleteTextView.setText("");
-
-                //See the details of the recipe picked
-                RecipeListData recipeData = (RecipeListData)parent.getItemAtPosition(position);
-
-                FragmentManager fragmentManager = getFragmentManager();
-
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                DetailFragment detailRecipeFragment;
-                detailRecipeFragment = new DetailFragment();
-
-                Bundle args = new Bundle();
-                args.putInt("recipe_id", recipeData.getId());
-                args.putString("recipe_title",recipeData.getTitle());
-                args.putString("recipe_user",recipeData.getUser());
-                detailRecipeFragment.setArguments(args);
-
-                fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-
-        });
-
-        //Search button on keyboard press
-        autoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String searchTerm = v.getText().toString();
-
-                    //Pass search term to BrowseActivity with Bundle
-                    Bundle args = new Bundle();
-                    args.putBoolean("viewbysearch_filter", true);
-                    args.putString("searchterm",searchTerm);
-
-                    clearKeyboard();
-                    autoCompleteTextView.clearListSelection();
-                    autoCompleteTextView.dismissDropDown();
-                    autoCompleteTextView.setText("");
-
-                    FragmentManager fragmentManager = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    BrowseFragment browseRecipeFragment = new BrowseFragment();
-                    browseRecipeFragment.setArguments(args);
-                    fragmentTransaction.replace(R.id.content_frame, browseRecipeFragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-
-                    return true;
-                }
-
-                return false;
-            }
-        });
-
-        //Search bar text change
-        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence searchTermSeq, int start, int before, int count) {
-                if (searchTermSeq.length() > 2) {
-                    String searchTerm = searchTermSeq.toString();
-                    try {
-                        searchTerm = URLEncoder.encode(searchTerm, "utf-8");
-                    } catch(UnsupportedEncodingException e) {
-                        //TODO: Catch URLEncoder exception
-                    }
-                    new SearchRecipeTask().execute("http://myagi.asuscomm.com:9245/api/v1/json/recipesByType/search/" + searchTerm);
-                    listAdapter = new ArrayAdapter<RecipeListData>(getSupportActionBar().getThemedContext(), R.layout.recipe_search_results, R.id.search_item_recipe_title);
-                    autoCompleteTextView.setAdapter(listAdapter);
-                    if (!autoCompleteTextView.isPopupShowing()) {
-                        autoCompleteTextView.showDropDown();
-                    }
-                }
-
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-        */
 
         if (savedInstanceState == null) {
             //Default fragment is to browse recipes

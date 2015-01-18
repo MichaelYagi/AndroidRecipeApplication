@@ -2,4 +2,9 @@
 <resources>
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="deepbluesea_1">#012345</color>
+    <color name="deepbluesea_2">#123456</color>
+    <color name="deepbluesea_3">#234567</color>
+    <color name="deepbluesea_4">#345678</color>
+    <color name="deepbluesea_5">#456789</color>
 </resources>
