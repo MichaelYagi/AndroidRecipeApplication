@@ -4,6 +4,7 @@ package ca.michaelyagi.recipeapplication;
 // Login action
 /******************************************************************/
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -119,6 +120,22 @@ public class LoginFragment extends Fragment {
         return llLayout;
     }
 
+    public interface OnFragmentInteractionListener {
+        public void highlightDrawerItem(int row);
+    }
+
+    private OnFragmentInteractionListener mListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            this.mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+        }
+    }
+
     /******************************************************************/
     // AsyncTasks
     /******************************************************************/
@@ -212,6 +229,8 @@ public class LoginFragment extends Fragment {
                             InputMethodManager imm = (InputMethodManager) target.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(target.getWindowToken(), 0);
                         }
+
+                        mListener.highlightDrawerItem(1);
 
                         FragmentManager fragmentManager = getFragmentManager();
 

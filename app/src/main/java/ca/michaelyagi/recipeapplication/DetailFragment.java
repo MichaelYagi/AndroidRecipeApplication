@@ -29,6 +29,7 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -97,6 +98,11 @@ public class DetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.detail_tab_host,container, false);
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
 
+        setHasOptionsMenu(true);
+
+        // update the actionbar to show the up carat
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //Get arguments passed
         recipeId = getArguments().getInt("recipe_id");
         recipeUser = getArguments().getString("recipe_user");
@@ -112,6 +118,19 @@ public class DetailFragment extends Fragment {
         mTabHost.addTab(mTabHost.newTabSpec("recipeImagesFragmentTab").setIndicator("Gallery"), RecipeImagesTabFragment.class, args);
 
         return rootView;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Get item selected and deal with it
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //called when the up carat in actionbar is pressed
+                getActivity().onBackPressed();
+                return true;
+        }
+
+        return true;
     }
 
     /******************************************************************/

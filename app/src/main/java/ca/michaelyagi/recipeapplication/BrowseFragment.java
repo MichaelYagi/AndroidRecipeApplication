@@ -144,6 +144,8 @@ public class BrowseFragment extends Fragment {
 
                 ((ListView) parent).setItemChecked(position, false);
 
+                mListener.showDrawerToggle(false);
+
                 //Get Data at position selected
                 RecipeListData recipeData = (RecipeListData)parent.getItemAtPosition(position);
 
@@ -166,6 +168,22 @@ public class BrowseFragment extends Fragment {
         });
 
         return llLayout;
+    }
+
+    public interface OnFragmentInteractionListener {
+        public void showDrawerToggle(boolean showDrawerToggle);
+    }
+
+    private OnFragmentInteractionListener mListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            this.mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override

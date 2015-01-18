@@ -4,6 +4,7 @@ package ca.michaelyagi.recipeapplication;
 // Register a new user
 /******************************************************************/
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -87,6 +88,22 @@ public class RegisterFragment extends Fragment {
         });
 
         return llLayout;
+    }
+
+    public interface OnFragmentInteractionListener {
+        public void highlightDrawerItem(int row);
+    }
+
+    private OnFragmentInteractionListener mListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            this.mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+        }
     }
 
     /******************************************************************/
@@ -185,6 +202,8 @@ public class RegisterFragment extends Fragment {
                         }
 
                         Toast.makeText(llLayout.getContext(), "Logging in...", Toast.LENGTH_SHORT).show();
+
+                        mListener.highlightDrawerItem(1);
 
                         //Go back to browse
                         FragmentManager fragmentManager = getFragmentManager();

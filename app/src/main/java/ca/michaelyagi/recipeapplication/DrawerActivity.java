@@ -10,6 +10,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.nsd.NsdManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -54,7 +55,7 @@ import java.util.List;
 /**
  * Created by Michael on 12/27/2014.
  */
-public class DrawerActivity extends ActionBarActivity {
+public class DrawerActivity extends ActionBarActivity implements BrowseFragment.OnFragmentInteractionListener,LoginFragment.OnFragmentInteractionListener,RegisterFragment.OnFragmentInteractionListener {
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     DrawerAdapter drawerListAdapter;
@@ -308,11 +309,23 @@ public class DrawerActivity extends ActionBarActivity {
 
     }
 
+    public void showDrawerToggle(boolean showDrawerIndicator) {
+        drawerToggle.setDrawerIndicatorEnabled(showDrawerIndicator);
+    }
+
+    public void highlightDrawerItem(int row) {
+        LAST_DRAWER_HIGHLIGHT_POSITION = row;
+        drawerList.setItemChecked(row, true);
+        drawerList.setSelection(row);
+    }
+
     /******************************************************************/
     // Define when user presses back button
     /******************************************************************/
     @Override
     public final void onBackPressed() {
+
+        drawerToggle.setDrawerIndicatorEnabled(true);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
