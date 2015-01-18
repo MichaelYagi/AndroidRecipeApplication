@@ -178,7 +178,9 @@ public class BrowseFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
+        final MenuItem anItem = item;
+
+        switch (anItem.getItemId()) {
             case R.id.menu_item_delete_recipes:
 
                 //Check if at least one item checked and show garbage icon in actionbar
@@ -210,12 +212,27 @@ public class BrowseFragment extends Fragment {
                                     // Set the ArrayAdapter as the ListView's adapter.
                                     browseListView.setAdapter(listAdapter);
                                     listAdapter.notifyDataSetChanged();
+                                    anItem.setVisible(false);
                                 }
 
                             })
-                            .setNegativeButton("No", null)
-                            .show();
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
 
+                                //Confirm cancel
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    for (int x = listAdapter.getCount() - 1; x >= 0; x--) {
+                                        if (((ListView) browseListView).isItemChecked(x)) {
+                                            ((ListView) browseListView).setItemChecked(x, false);
+                                            ((ListView) browseListView).getChildAt(x).setBackgroundColor(Color.WHITE);
+                                        }
+
+                                    }
+                                    anItem.setVisible(false);
+                                }
+
+                            })
+                            .show();
 
                 }
 
