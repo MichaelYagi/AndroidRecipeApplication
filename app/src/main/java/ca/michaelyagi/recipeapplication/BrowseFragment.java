@@ -5,8 +5,10 @@ package ca.michaelyagi.recipeapplication;
 /******************************************************************/
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,12 +19,15 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +44,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -65,7 +71,8 @@ public class BrowseFragment extends Fragment {
     BrowseAdapter listAdapter;
     // Create and populate a List of recipes
     List<RecipeListData> recipeList = new ArrayList<RecipeListData>();
-
+    MenuItem deleteRecipesItem;
+    Bundle args;
 
     private RelativeLayout        llLayout;
     private boolean popNext = false;
@@ -73,9 +80,11 @@ public class BrowseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         llLayout    = (RelativeLayout)    inflater.inflate(R.layout.fragment_browse, container, false);
+        setHasOptionsMenu(true);
 
         //Find the ListView
         browseListView = (ListView) llLayout.findViewById( R.id.browseListView );
+        browseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         //Clear the recipe list
         recipeList.clear();
@@ -84,12 +93,15 @@ public class BrowseFragment extends Fragment {
         listAdapter = new BrowseAdapter(super.getActivity(),R.layout.browse_recipe_row,recipeList);
 
         // Set the ArrayAdapter as the ListView's adapter.
-        browseListView.setAdapter( listAdapter );
+        browseListView.setAdapter(listAdapter);
 
         /******************************************************************/
         // Get recipe list based on arguments passed
         /******************************************************************/
         //Get recipes by user logged in
+        if (getArguments() != null) {
+            args = getArguments();
+        }
         if (getArguments() != null && getArguments().getString("user") != null && getArguments().getBoolean("viewbyuser_filter") && getArguments().getString("user").length() > 0) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("User Recipes");
             new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + getArguments().getString("user"));
@@ -125,6 +137,9 @@ public class BrowseFragment extends Fragment {
         browseListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+
+                ((ListView) parent).setItemChecked(position, false);
+
                 //Get Data at position selected
                 RecipeListData recipeData = (RecipeListData)parent.getItemAtPosition(position);
 
@@ -150,14 +165,63 @@ public class BrowseFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public void onPrepareOptionsMenu(Menu menu) {
 
-        if (id == R.id.action_settings) {
-            return true;
+        MenuItem deleteRecipes = menu.findItem(R.id.menu_item_delete_recipes);
+        deleteRecipes.setVisible(false);
+
+        if (((ListView) browseListView).getCheckedItemCount() > 0) {
+            deleteRecipes.setVisible(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.menu_item_delete_recipes:
+
+                //Check if at least one item checked and show garbage icon in actionbar
+                if (((ListView) browseListView).getCheckedItemCount() > 0) {
+
+                    new AlertDialog.Builder(llLayout.getContext())
+                            .setIconAttribute(android.R.attr.alertDialogIcon)
+                            .setTitle("Confirmation")
+                            .setMessage("Delete recipes?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                                //Confirm delete
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    for (int x = listAdapter.getCount() - 1; x >= 0; x--) {
+                                        if (((ListView) browseListView).isItemChecked(x)) {
+                                            //DELETE request to delete this recipe
+                                            new DeleteRequestTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeList.get(x).getId());
+                                            recipeList.remove(listAdapter.getItem(x));
+                                        }
+
+                                    }
+
+                                    Toast.makeText(llLayout.getContext(), "Recipes Deleted...", Toast.LENGTH_SHORT).show();
+
+                                    //Refresh the browsefragment
+                                    listAdapter = new BrowseAdapter(getActivity(),R.layout.browse_recipe_row,recipeList);
+
+                                    // Set the ArrayAdapter as the ListView's adapter.
+                                    browseListView.setAdapter(listAdapter);
+                                    listAdapter.notifyDataSetChanged();
+                                }
+
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+
+
+                }
+
+                break;
+            case R.id.action_settings:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -301,6 +365,88 @@ public class BrowseFragment extends Fragment {
         }
     }
 
+    //DELETE this recipe
+    class DeleteRequestTask extends AsyncTask<String, String, String> {
+
+        private ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            dialog = Utils.createProgressDialog(getActivity());
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... uri) {
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpResponse response;
+            String responseString = null;
+            HttpDelete delete = null;
+            try {
+                delete = new HttpDelete(uri[0]);
+
+                String strValue = SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()) + ":" + SaveSharedPreference.getPassword(RecipeBookApplication.getAppContext());
+                String basicAuth = "Basic " + Base64.encodeToString(strValue.getBytes(), Base64.NO_WRAP);
+                delete.setHeader("Authorization", basicAuth);
+                delete.setHeader("Accept", "application/json");
+                delete.setHeader("Content-type", "application/json");
+
+                response = httpclient.execute(delete);
+                StatusLine statusLine = response.getStatusLine();
+                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+                    responseString = out.toString();
+                } else{
+                    //Closes the connection.
+                    response.getEntity().getContent().close();
+                    throw new IOException(statusLine.getReasonPhrase());
+                }
+            } catch (IOException e) {
+                //TODO Handle problems..
+                System.out.println(e.toString());
+            }
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            //Result is responseString from request
+            super.onPostExecute(result);
+
+            if (result != null && result.length() > 0) {
+                try {
+                    //Turn response into JSON object
+                    JSONObject jsonObj = new JSONObject(result);
+
+                    if (jsonObj.getString("retval").equals("1") && jsonObj.getString("message").equals("Success")) {
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                    } else {
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                        Toast.makeText(llLayout.getContext(), "Could Not Delete Recipe...", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    //TODO
+                    System.out.println(e.toString());
+                }
+            } else {
+                Toast.makeText(llLayout.getContext(), "Connection Error...", Toast.LENGTH_SHORT).show();
+                Utils.reconnectDialog(getActivity());
+            }
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+    }
+
     //Download images for a recipe
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -399,6 +545,10 @@ public class BrowseFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            final View cView = convertView;
+            final int vPosition = position;
+            final ViewGroup vParent = parent;
+
             ViewHolder holder = null;
             RecipeListData rowItem = getItem(position);
 
@@ -420,18 +570,18 @@ public class BrowseFragment extends Fragment {
             holder.titleText.setText(rowItem.getTitle());
             holder.userText.setText(rowItem.getUser());
 
-            if(rowItem.getServes() > 0) {
+            if (rowItem.getServes() > 0) {
                 String serves = Integer.toString(rowItem.getServes());
                 holder.servesText.setText(serves);
             }
 
-            if((rowItem.getPrepTime() != null && !rowItem.getPrepTime().isEmpty()) && !rowItem.getPrepTime().equals("00:00:00")) {
+            if ((rowItem.getPrepTime() != null && !rowItem.getPrepTime().isEmpty()) && !rowItem.getPrepTime().equals("00:00:00")) {
                 String prep = rowItem.getPrepTime();
                 prep = prep.substring(0, prep.length() - 3);
                 holder.prepText.setText(prep);
             }
 
-            if((rowItem.getCookTime() != null && !rowItem.getCookTime().isEmpty()) && !rowItem.getCookTime().equals("00:00:00")) {
+            if ((rowItem.getCookTime() != null && !rowItem.getCookTime().isEmpty()) && !rowItem.getCookTime().equals("00:00:00")) {
                 String cook = rowItem.getCookTime();
                 cook = cook.substring(0, cook.length() - 3);
                 holder.cookText.setText(cook);
@@ -444,6 +594,25 @@ public class BrowseFragment extends Fragment {
                 holder.image.setImageDrawable(drawable);
             } else {
                 holder.image.setImageBitmap(rowItem.getImage());
+            }
+
+            if (args != null && args.getBoolean("viewbyuser_filter") && holder.userText.getText().toString().equals(SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()))) {
+
+                //Delete items when clicking image
+                holder.image.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        getActivity().invalidateOptionsMenu();
+                        if (((ListView) vParent).isItemChecked(vPosition)) {
+                            ((ListView) vParent).setItemChecked(vPosition, false);
+                            ((ListView) vParent).getChildAt(vPosition).setBackgroundColor(Color.WHITE);
+                        } else {
+                            ((ListView) vParent).setItemChecked(vPosition, true);
+                            ((ListView) vParent).getChildAt(vPosition).setBackgroundColor(Color.LTGRAY);
+                        }
+                    }
+                });
             }
 
             return convertView;

@@ -5,4 +5,5 @@
     android:padding="10dp"
     android:textSize="16sp"
     android:textColor="#ffffff"
+    android:background="?android:attr/activatedBackgroundIndicator"
     android:id="@+id/drawerItemView"/>

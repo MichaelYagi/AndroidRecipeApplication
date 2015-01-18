@@ -499,6 +499,9 @@ public class DrawerActivity extends ActionBarActivity {
         MenuItem shareItem = menu.findItem(R.id.menu_item_share);
         shareItem.setVisible(false);
 
+        MenuItem deleteRecipesItem = menu.findItem(R.id.menu_item_delete_recipes);
+        deleteRecipesItem.setVisible(false);
+
         MenuItem deleteImagesItem = menu.findItem(R.id.menu_item_delete_images);
         deleteImagesItem.setVisible(false);
 
@@ -642,7 +645,7 @@ public class DrawerActivity extends ActionBarActivity {
         }
 
         // Highlight the selected item, update the title, and close the drawer
-        drawerList.setItemChecked(position, true);
+        drawerList.setItemChecked(position+1, true);
         setTitle(this.drawerItems[position]);
         drawerLayout.closeDrawer(drawerList);
     }
