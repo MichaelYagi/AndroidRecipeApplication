@@ -12,7 +12,15 @@
 
     <ListView android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/browseListView">
-    </ListView>
+        android:id="@+id/browseListView" />
+    <TextView
+        android:id="@+id/browseText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>

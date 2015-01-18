@@ -5,9 +5,11 @@ package ca.michaelyagi.recipeapplication;
 // The left side drawer persistent throughout the app
 /******************************************************************/
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -27,6 +29,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -51,9 +54,10 @@ import java.util.List;
  * Created by Michael on 12/27/2014.
  */
 public class DrawerActivity extends ActionBarActivity {
-    private String[] drawerItems;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
+    DrawerAdapter drawerListAdapter;
+    List<DrawerListData> drawerItems = new ArrayList<DrawerListData>();
     private ActionBarDrawerToggle drawerToggle;
     private ShareActionProvider mShareActionProvider;
 
@@ -62,6 +66,8 @@ public class DrawerActivity extends ActionBarActivity {
     // Create and populate a List of recipes
     List<RecipeListData> recipeList = new ArrayList<RecipeListData>();
     List<String> searchSuggestions;
+
+    public static int LAST_DRAWER_HIGHLIGHT_POSITION = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +84,10 @@ public class DrawerActivity extends ActionBarActivity {
         setContentView(R.layout.activity_drawer);
 
         //Initial drawer items
-        drawerItems = new String[]{"Browse Recipes"};
+        DrawerListData d = new DrawerListData();
+        d.setDrawerItemText("Browse Recipe");
+        d.setDrawerItemIcon(R.drawable.ic_action_accounts);
+        drawerItems.add(d);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -86,12 +95,18 @@ public class DrawerActivity extends ActionBarActivity {
         drawerLayout.setDrawerListener(drawerToggle);
 
         drawerList = (ListView) findViewById(R.id.left_drawer);
-
-        // Set the adapter for the list view
-        drawerList.setAdapter(new ArrayAdapter<String>(getSupportActionBar().getThemedContext(), R.layout.drawer_list_item, drawerItems));
+        drawerList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        LAST_DRAWER_HIGHLIGHT_POSITION = 1;
+        drawerList.setItemChecked(LAST_DRAWER_HIGHLIGHT_POSITION, true);
+        drawerList.setSelection(LAST_DRAWER_HIGHLIGHT_POSITION);
 
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        // Set the adapter for the list view
+        drawerListAdapter = new DrawerAdapter(getSupportActionBar().getThemedContext(),R.layout.drawer_list_item,drawerItems);
+        // Set the ArrayAdapter as the ListView's adapter.
+        drawerList.setAdapter(drawerListAdapter);
 
         LayoutInflater inflater = getLayoutInflater();
         final ViewGroup drawerHeader = (ViewGroup) inflater.inflate(R.layout.drawer_list_header,drawerList,false);
@@ -119,6 +134,9 @@ public class DrawerActivity extends ActionBarActivity {
                 R.string.open_drawer,
                 R.string.close_drawer) {
             public void onDrawerStateChanged(int newState) {
+                drawerList.setItemChecked(LAST_DRAWER_HIGHLIGHT_POSITION, true);
+                drawerList.setSelection(LAST_DRAWER_HIGHLIGHT_POSITION);
+
                 //Set Drawer header
                 TextView headerUser = (TextView) drawerHeader.findViewById(R.id.header_user);
                 TextView headerEmail = (TextView) drawerHeader.findViewById(R.id.header_email);
@@ -139,6 +157,7 @@ public class DrawerActivity extends ActionBarActivity {
                     drawerList.removeHeaderView(drawerHeader);
                     drawerList.addHeaderView(drawerHeader, null, false);
                 }
+
             }
 
             public void onDrawerClosed(View view) {
@@ -395,11 +414,50 @@ public class DrawerActivity extends ActionBarActivity {
         if (drawerToggle.onOptionsItemSelected(item)) {
             //Not logged in
             if (SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()).length() == 0) {
-                drawerItems = new String[]{"Browse Recipes","Login","Register"};
-                drawerList.setAdapter(new ArrayAdapter<String>(getSupportActionBar().getThemedContext(), R.layout.drawer_list_item, drawerItems));
+                drawerItems.clear();
+
+                DrawerListData d = new DrawerListData();
+                d.setDrawerItemText("Browse Recipe");
+                d.setDrawerItemIcon(R.drawable.ic_action_view_as_list);
+                drawerItems.add(d);
+
+                d = new DrawerListData();
+                d.setDrawerItemText("Login");
+                d.setDrawerItemIcon(R.drawable.ic_action_person);
+                drawerItems.add(d);
+
+                d = new DrawerListData();
+                d.setDrawerItemText("Register");
+                d.setDrawerItemIcon(R.drawable.ic_action_add_person);
+                drawerItems.add(d);
+
+                drawerListAdapter = new DrawerAdapter(getSupportActionBar().getThemedContext(),R.layout.drawer_list_item,drawerItems);
+                drawerList.setAdapter(drawerListAdapter);
             } else {
-                drawerItems = new String[]{"Browse Recipes","My Recipes","Add Recipe","My Account","Logout"};
-                drawerList.setAdapter(new ArrayAdapter<String>(getSupportActionBar().getThemedContext(), R.layout.drawer_list_item, drawerItems));
+                drawerItems.clear();
+
+                DrawerListData d = new DrawerListData();
+                d.setDrawerItemText("Browse Recipe");
+                d.setDrawerItemIcon(R.drawable.ic_action_view_as_list);
+                drawerItems.add(d);
+
+                d = new DrawerListData();
+                d.setDrawerItemText("My Recipes");
+                d.setDrawerItemIcon(R.drawable.ic_action_important);
+                drawerItems.add(d);
+
+                d = new DrawerListData();
+                d.setDrawerItemText("Add Recipe");
+                d.setDrawerItemIcon(R.drawable.ic_action_new);
+                drawerItems.add(d);
+
+                d = new DrawerListData();
+                d.setDrawerItemText("My Account");
+                d.setDrawerItemIcon(R.drawable.ic_action_accounts);
+                drawerItems.add(d);
+
+                drawerListAdapter = new DrawerAdapter(getSupportActionBar().getThemedContext(),R.layout.drawer_list_item,drawerItems);
+                drawerList.setAdapter(drawerListAdapter);
             }
 
             return true;
@@ -547,7 +605,8 @@ public class DrawerActivity extends ActionBarActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
+            LAST_DRAWER_HIGHLIGHT_POSITION = position;
+            selectItem(LAST_DRAWER_HIGHLIGHT_POSITION);
         }
     }
 
@@ -645,8 +704,10 @@ public class DrawerActivity extends ActionBarActivity {
         }
 
         // Highlight the selected item, update the title, and close the drawer
+        LAST_DRAWER_HIGHLIGHT_POSITION = position+1;
         drawerList.setItemChecked(position+1, true);
-        setTitle(this.drawerItems[position]);
+        drawerList.setSelection(position+1);
+        setTitle(drawerItems.get(position).getDrawerItemText());
         drawerLayout.closeDrawer(drawerList);
     }
 
@@ -684,6 +745,61 @@ public class DrawerActivity extends ActionBarActivity {
         public void setUser(String aUser) {
             this.user = aUser;
         }
+    }
+
+    class DrawerListData {
+        private int drawerItemIcon;
+        private String drawerItemText;
+
+        public String getDrawerItemText() {return this.drawerItemText;}
+        public int getDrawerItemIcon() {return this.drawerItemIcon;}
+        public void setDrawerItemText(String anItemText) {this.drawerItemText = anItemText;}
+        public void setDrawerItemIcon(int anItemIcon) {this.drawerItemIcon = anItemIcon;}
+    }
+
+    public class DrawerAdapter extends ArrayAdapter<DrawerListData> {
+        private final Context context;
+        private final List<DrawerListData> data;
+        private final int layoutResourceId;
+
+        public DrawerAdapter(Context context, int layoutResourceId, List<DrawerListData> data) {
+            super(context, layoutResourceId, data);
+            this.context = context;
+            this.data = data;
+            this.layoutResourceId = layoutResourceId;
+        }
+
+        private class ViewHolder {
+            ImageView drawerIcon;
+            TextView drawerText;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final View cView = convertView;
+            final int vPosition = position;
+            final ViewGroup vParent = parent;
+
+            ViewHolder holder = null;
+            DrawerListData rowItem = getItem(position);
+
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+                holder = new ViewHolder();
+                holder.drawerIcon = (ImageView) convertView.findViewById(R.id.drawerItemIcon);
+                holder.drawerText = (TextView) convertView.findViewById(R.id.drawerItemView);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.drawerText.setText(rowItem.getDrawerItemText());
+            holder.drawerIcon.setImageResource(rowItem.getDrawerItemIcon());
+
+            return convertView;
+        }
+
     }
 
     public void clearKeyboard() {

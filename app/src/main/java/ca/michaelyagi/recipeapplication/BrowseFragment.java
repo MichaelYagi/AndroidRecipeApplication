@@ -67,7 +67,7 @@ import java.util.List;
  * Created by Michael on 12/27/2014.
  */
 public class BrowseFragment extends Fragment {
-    ListView browseListView ;
+    ListView browseListView;
     BrowseAdapter listAdapter;
     // Create and populate a List of recipes
     List<RecipeListData> recipeList = new ArrayList<RecipeListData>();
@@ -76,6 +76,7 @@ public class BrowseFragment extends Fragment {
 
     private RelativeLayout        llLayout;
     private boolean popNext = false;
+    TextView browseText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -85,6 +86,9 @@ public class BrowseFragment extends Fragment {
         //Find the ListView
         browseListView = (ListView) llLayout.findViewById( R.id.browseListView );
         browseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+        browseText = (TextView) llLayout.findViewById(R.id.browseText);
+        browseText.setText("");
 
         //Clear the recipe list
         recipeList.clear();
@@ -211,6 +215,9 @@ public class BrowseFragment extends Fragment {
 
                                     // Set the ArrayAdapter as the ListView's adapter.
                                     browseListView.setAdapter(listAdapter);
+                                    if (listAdapter.getCount() == 0) {
+                                        browseText.setText("No Recipes");
+                                    }
                                     listAdapter.notifyDataSetChanged();
                                     anItem.setVisible(false);
                                 }
@@ -365,7 +372,7 @@ public class BrowseFragment extends Fragment {
                         }
 
                     } else {
-                        Toast.makeText(llLayout.getContext(), "No Recipes...", Toast.LENGTH_SHORT).show();
+                        browseText.setText("No Recipes");
                     }
 
                 } catch (JSONException e) {
