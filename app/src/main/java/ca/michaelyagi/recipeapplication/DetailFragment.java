@@ -4,9 +4,12 @@ package ca.michaelyagi.recipeapplication;
 // Display's a recipe. User can choose to Edit or Delete recipe
 /******************************************************************/
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -128,6 +131,15 @@ public class DetailFragment extends Fragment {
                 //called when the up carat in actionbar is pressed
                 getActivity().onBackPressed();
                 return true;
+            //Share button
+            case R.id.menu_item_share:
+                return false;
+            //Edit a recipe
+            case R.id.menu_edit:
+                return false;
+            //Delete a recipe with dialog
+            case R.id.menu_delete:
+                return false;
         }
 
         return true;
