@@ -134,9 +134,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         drawerLayout.setDrawerListener(drawerToggle);
 
         drawerList = (ListView) findViewById(R.id.left_drawer);
-        LAST_DRAWER_HIGHLIGHT_POSITION = 1;
-        drawerList.setItemChecked(LAST_DRAWER_HIGHLIGHT_POSITION, true);
-        drawerList.setSelection(LAST_DRAWER_HIGHLIGHT_POSITION);
+        highlightDrawerItem(1);
 
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -172,8 +170,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
                 R.string.open_drawer,
                 R.string.close_drawer) {
             public void onDrawerStateChanged(int newState) {
-                drawerList.setItemChecked(LAST_DRAWER_HIGHLIGHT_POSITION, true);
-                drawerList.setSelection(LAST_DRAWER_HIGHLIGHT_POSITION);
+                highlightDrawerItem(LAST_DRAWER_HIGHLIGHT_POSITION);
 
                 //Set Drawer header
                 TextView headerUser = (TextView) drawerHeader.findViewById(R.id.header_user);
@@ -412,27 +409,21 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
 
         switch (item.getItemId()) {
             case R.id.menu_login:
-                LAST_DRAWER_HIGHLIGHT_POSITION = 2;
-                drawerList.setItemChecked(2, true);
-                drawerList.setSelection(2);
+                highlightDrawerItem(2);
                 LoginFragment loginFragment = new LoginFragment();
                 fragmentTransaction.replace(R.id.content_frame, loginFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 return true;
             case R.id.menu_register:
-                LAST_DRAWER_HIGHLIGHT_POSITION = 3;
-                drawerList.setItemChecked(3, true);
-                drawerList.setSelection(3);
+                highlightDrawerItem(3);
                 RegisterFragment registerFragment = new RegisterFragment();
                 fragmentTransaction.replace(R.id.content_frame, registerFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 return true;
             case R.id.menu_logout:
-                LAST_DRAWER_HIGHLIGHT_POSITION = 1;
-                drawerList.setItemChecked(1, true);
-                drawerList.setSelection(1);
+                highlightDrawerItem(1);
                 Toast.makeText(this, "Logging Out...",Toast.LENGTH_SHORT).show();
                 SaveSharedPreference.clearCredentials(RecipeBookApplication.getAppContext());
 
@@ -660,9 +651,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         }
 
         // Highlight the selected item, update the title, and close the drawer
-        LAST_DRAWER_HIGHLIGHT_POSITION = position+1;
-        drawerList.setItemChecked(position+1, true);
-        drawerList.setSelection(position+1);
+        highlightDrawerItem(position+1);
         setTitle(drawerItems.get(position).getDrawerItemText());
         drawerLayout.closeDrawer(drawerList);
     }
