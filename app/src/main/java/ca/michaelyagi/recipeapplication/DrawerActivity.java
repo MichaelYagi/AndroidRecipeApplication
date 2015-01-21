@@ -89,10 +89,44 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#012345")));
 
         //Initial drawer items
-        DrawerListData d = new DrawerListData();
-        d.setDrawerItemText("Browse Recipe");
-        d.setDrawerItemIcon(R.drawable.ic_action_accounts);
-        drawerItems.add(d);
+        DrawerListData d;
+
+        if (SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()).length() == 0) {
+            d = new DrawerListData();
+            d.setDrawerItemText("Browse Recipe");
+            d.setDrawerItemIcon(R.drawable.ic_action_view_as_list);
+            drawerItems.add(d);
+
+            d = new DrawerListData();
+            d.setDrawerItemText("Login");
+            d.setDrawerItemIcon(R.drawable.ic_action_person);
+            drawerItems.add(d);
+
+            d = new DrawerListData();
+            d.setDrawerItemText("Register");
+            d.setDrawerItemIcon(R.drawable.ic_action_add_person);
+            drawerItems.add(d);
+        } else {
+            d = new DrawerListData();
+            d.setDrawerItemText("Browse Recipe");
+            d.setDrawerItemIcon(R.drawable.ic_action_view_as_list);
+            drawerItems.add(d);
+
+            d = new DrawerListData();
+            d.setDrawerItemText("My Recipes");
+            d.setDrawerItemIcon(R.drawable.ic_action_important);
+            drawerItems.add(d);
+
+            d = new DrawerListData();
+            d.setDrawerItemText("Add Recipe");
+            d.setDrawerItemIcon(R.drawable.ic_action_new);
+            drawerItems.add(d);
+
+            d = new DrawerListData();
+            d.setDrawerItemText("My Account");
+            d.setDrawerItemIcon(R.drawable.ic_action_accounts);
+            drawerItems.add(d);
+        }
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
