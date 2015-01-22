@@ -3,8 +3,12 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     android:exitFadeDuration="@android:integer/config_mediumAnimTime">
 
+    <item android:drawable="@color/deepbluesea_5" android:state_focused="true" android:state_pressed="false"/>
     <item android:drawable="@color/deepbluesea_5" android:state_pressed="true"/>
-    <item android:drawable="@color/deepbluesea_5" android:state_selected="true"/>
     <item android:drawable="@color/deepbluesea_5" android:state_activated="true"/>
+    <item android:drawable="@color/deepbluesea_5" android:state_checked="true"/>
+    <item android:drawable="@color/deepbluesea_5" android:state_selected="true"/>
+
+    <item android:drawable="@color/drawer_background" android:state_activated="false"/>
 
 </selector>
