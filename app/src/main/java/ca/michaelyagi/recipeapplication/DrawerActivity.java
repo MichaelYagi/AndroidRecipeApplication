@@ -85,8 +85,12 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         Utils.setWebsiteUrl("myagi.asuscomm.com",9244);
 
         setContentView(R.layout.activity_drawer);
-        ActionBar bar = getSupportActionBar();
-        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#012345")));
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar .setBackgroundDrawable(new ColorDrawable(Color.parseColor("#012345")));
 
         //Initial drawer items
         DrawerListData d;
@@ -217,12 +221,6 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         });
 
         drawerLayout.setDrawerListener(drawerToggle);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(true);
 
         if (savedInstanceState == null) {
             //Default fragment is to browse recipes
