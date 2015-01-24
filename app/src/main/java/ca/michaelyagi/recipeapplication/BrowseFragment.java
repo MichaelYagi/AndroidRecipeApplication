@@ -392,7 +392,7 @@ public class BrowseFragment extends Fragment {
                                         d.setId(recipeId);
                                         d.setTitle(recipeObj.get("title").toString());
                                         String draftText = "";
-                                        if (!this.ShowOnlyPublished) {
+                                        if (!this.ShowOnlyPublished && !recipeObj.getString("published").equals("1")) {
                                             draftText = "DRAFT";
                                         }
                                         d.setDraft(draftText);
