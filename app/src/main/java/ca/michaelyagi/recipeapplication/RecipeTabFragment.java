@@ -338,6 +338,9 @@ public class RecipeTabFragment extends Fragment {
                                 case "id":
                                     recipeData.id = Integer.parseInt(jsonObj.get(tempKey).toString());
                                     break;
+                                case "published":
+                                    recipeData.published = Integer.parseInt(jsonObj.get(tempKey).toString());
+                                    break;
                                 case "title":
                                     recipeData.title = jsonObj.get(tempKey).toString();
                                     recipeTitle = jsonObj.get(tempKey).toString();
@@ -474,7 +477,11 @@ public class RecipeTabFragment extends Fragment {
 
         //Set the title
         TextView titleText = (TextView)svLayout.findViewById(R.id.detailTitleTextView);
-        titleText.setText(Html.fromHtml(recipeData.title));
+        String titleString = recipeData.title;
+        if (recipeData.published == 0) {
+            titleString = titleString + " - DRAFT";
+        }
+        titleText.setText(Html.fromHtml(titleString));
 
         //Set user
         TextView userText = (TextView)svLayout.findViewById(R.id.detailUserTextView);
@@ -653,6 +660,7 @@ public class RecipeTabFragment extends Fragment {
     /******************************************************************/
     private class RecipeData {
         int id;
+        int published;
         String title;
         String prepTime;
         String cookTime;

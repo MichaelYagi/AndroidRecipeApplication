@@ -41,8 +41,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -97,6 +99,7 @@ public class EditRecipeFragment extends Fragment {
     private static int RESULT_LOAD_IMG = 1;
 
     private EditText titleEdit;
+    private ToggleButton publishToggle;
     private EditText unitEdit;
     private EditText amountEdit;
     private EditText ingredientEdit;
@@ -465,6 +468,9 @@ public class EditRecipeFragment extends Fragment {
                             switch (tempKey) {
                                 case "id":
                                     recipeData.id = Integer.parseInt(jsonObj.get(tempKey).toString());
+                                    break;
+                                case "published":
+                                    recipeData.published = Integer.parseInt(jsonObj.get(tempKey).toString());
                                     break;
                                 case "title":
                                     recipeData.title = Html.fromHtml(jsonObj.get(tempKey).toString()).toString();
@@ -1156,6 +1162,13 @@ public class EditRecipeFragment extends Fragment {
             //user_id
             jsonRecipeObj.put("user_id", SaveSharedPreference.getUserID(RecipeBookApplication.getAppContext()));
 
+            //publish
+            int isPublished = 0;
+            if (publishToggle.isChecked()) {
+                isPublished = 1;
+            }
+            jsonRecipeObj.put("published", isPublished);
+
             //user
             jsonRecipeObj.put("user", recipeUser);
 
@@ -1285,6 +1298,14 @@ public class EditRecipeFragment extends Fragment {
         //Set the title
         titleEdit = (EditText) llLayout.findViewById(R.id.recipe_title);
         titleEdit.setText(recipeData.title);
+
+        //Set the published switch
+        publishToggle = (ToggleButton) llLayout.findViewById(R.id.publish_toggle);
+        if (recipeData.published == 1) {
+            publishToggle.setChecked(true);
+        } else {
+            publishToggle.setChecked(false);
+        }
 
         //Set Images
         imageCounter = 1;
@@ -1687,6 +1708,7 @@ public class EditRecipeFragment extends Fragment {
     /******************************************************************/
     class RecipeData {
         int id;
+        int published;
         String title;
         String prepTime;
         String cookTime;

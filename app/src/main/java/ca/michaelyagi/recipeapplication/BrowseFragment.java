@@ -108,7 +108,7 @@ public class BrowseFragment extends Fragment {
         }
         if (getArguments() != null && getArguments().getString("user") != null && getArguments().getBoolean("viewbyuser_filter") && getArguments().getString("user").length() > 0) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("User Recipes");
-            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + getArguments().getString("user"));
+            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + getArguments().getString("user"));
         } else if (getArguments() != null && getArguments().getString("keyword") != null && getArguments().getBoolean("viewbytag_filter") && getArguments().getString("keyword").length() > 0) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("keyword") + "\"");
             String tag = "";
@@ -117,7 +117,7 @@ public class BrowseFragment extends Fragment {
             } catch(UnsupportedEncodingException e) {
                 //TODO: Catch URLEncoder exception
             }
-            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/tag/" + tag);
+            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/tag/" + tag);
             //Get recipes by search term
         } else if (getArguments() != null && getArguments().getString("searchterm") != null && getArguments().getBoolean("viewbysearch_filter") && getArguments().getString("searchterm").length() > 0) {
             ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("searchterm") + "\"");
@@ -127,14 +127,14 @@ public class BrowseFragment extends Fragment {
             } catch (UnsupportedEncodingException e) {
                 //TODO: Catch URLEncoder exception
             }
-            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/search/" + searchTerm);
+            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/search/" + searchTerm);
         } else if (getArguments() != null && getArguments().getBoolean("viewbyuser_filter")) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("My Recipes");
-            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
+            new RequestBrowseTask(false).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
         //Get all recipes
         } else {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Browse");
-            new RequestBrowseTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipes");
+            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipes");
         }
 
         //On click listener when user clicks on a browse item
@@ -219,6 +219,7 @@ public class BrowseFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     for (int x = listAdapter.getCount() - 1; x >= 0; x--) {
                                         if (((ListView) browseListView).isItemChecked(x)) {
+                                            ((ListView) browseListView).setItemChecked(x,false);
                                             //DELETE request to delete this recipe
                                             new DeleteRequestTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeList.get(x).getId());
                                             recipeList.remove(listAdapter.getItem(x));
@@ -276,6 +277,11 @@ public class BrowseFragment extends Fragment {
     class RequestBrowseTask extends AsyncTask<String, String, String>{
 
         private ProgressDialog dialog;
+        private boolean ShowOnlyPublished;
+
+        public RequestBrowseTask(boolean aShowOnlyPublished) {
+            this.ShowOnlyPublished = aShowOnlyPublished;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -310,6 +316,7 @@ public class BrowseFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String result) {
+
             //Result is responseString from request
             super.onPostExecute(result);
             if (result != null && result.length() > 0) {
@@ -327,26 +334,33 @@ public class BrowseFragment extends Fragment {
                     //If request was successful
                     if (jsonObj.getString("retval").equals("1") && jsonObj.getString("message").equals("Success")) {
                         if (jsonObj.has("id")) {
-                            RecipeListData d = new RecipeListData();
-                            Integer recipeId = Integer.parseInt(jsonObj.get("id").toString());
-                            d.setId(recipeId);
-                            d.setTitle(jsonObj.get("title").toString());
-                            d.setUser(jsonObj.get("user").toString());
-                            Integer serves = Integer.parseInt(jsonObj.get("serves").toString());
-                            d.setServes(serves);
-                            d.setCookTime(jsonObj.get("cook_time").toString());
-                            d.setPrepTime(jsonObj.get("prep_time").toString());
-                            listAdapter.add(d);
-
-                            if (jsonObj.get("image_id") != null && !jsonObj.get("image_id").toString().isEmpty()) {
-                                String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonObj.get("image_id").toString();
-                                if (jsonObj.get("extension") != null && !jsonObj.get("extension").toString().isEmpty()) {
-                                    imageUrl = imageUrl + "." + jsonObj.get("extension").toString();
+                            if ((this.ShowOnlyPublished && jsonObj.getString("published").equals("1")) || !this.ShowOnlyPublished) {
+                                RecipeListData d = new RecipeListData();
+                                Integer recipeId = Integer.parseInt(jsonObj.get("id").toString());
+                                d.setId(recipeId);
+                                d.setTitle(jsonObj.get("title").toString());
+                                String draftText = "";
+                                if (!this.ShowOnlyPublished) {
+                                    draftText = "DRAFT";
                                 }
+                                d.setDraft(draftText);
+                                d.setUser(jsonObj.get("user").toString());
+                                Integer serves = Integer.parseInt(jsonObj.get("serves").toString());
+                                d.setServes(serves);
+                                d.setCookTime(jsonObj.get("cook_time").toString());
+                                d.setPrepTime(jsonObj.get("prep_time").toString());
+                                listAdapter.add(d);
 
-                                //Call AsyncTask to convert Url to Bmp, pass json object
-                                new DownloadImageTask(counter,d).execute(imageUrl);
+                                if (jsonObj.get("image_id") != null && !jsonObj.get("image_id").toString().isEmpty()) {
+                                    String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonObj.get("image_id").toString();
+                                    if (jsonObj.get("extension") != null && !jsonObj.get("extension").toString().isEmpty()) {
+                                        imageUrl = imageUrl + "." + jsonObj.get("extension").toString();
+                                    }
 
+                                    //Call AsyncTask to convert Url to Bmp, pass json object
+                                    new DownloadImageTask(counter, d).execute(imageUrl);
+
+                                }
                             }
 
                         } else {
@@ -358,33 +372,42 @@ public class BrowseFragment extends Fragment {
 
                                 //Don't include the retval or message objects
                                 if (!tempKey.equals("retval") && !tempKey.equals("message")) {
+
                                     RecipeListData d = new RecipeListData();
 
                                     JSONObject recipeObj = new JSONObject(jsonObj.get(tempKey).toString());
 
-                                    Integer recipeId = Integer.parseInt(recipeObj.get("id").toString());
-                                    d.setId(recipeId);
-                                    d.setTitle(recipeObj.get("title").toString());
-                                    d.setUser(recipeObj.get("user").toString());
-                                    Integer serves = Integer.parseInt(recipeObj.get("serves").toString());
-                                    d.setServes(serves);
-                                    d.setCookTime(recipeObj.get("cook_time").toString());
-                                    d.setPrepTime(recipeObj.get("prep_time").toString());
-                                    listAdapter.add(d);
+                                    if ((this.ShowOnlyPublished && recipeObj.getString("published").equals("1")) || !this.ShowOnlyPublished) {
 
-                                    if (!recipeObj.get("image_id").toString().equals("null") && !recipeObj.get("image_id").toString().isEmpty()) {
+                                        Integer recipeId = Integer.parseInt(recipeObj.get("id").toString());
+                                        d.setId(recipeId);
+                                        d.setTitle(recipeObj.get("title").toString());
+                                        String draftText = "";
+                                        if (!this.ShowOnlyPublished) {
+                                            draftText = "DRAFT";
+                                        }
+                                        d.setDraft(draftText);
+                                        d.setUser(recipeObj.get("user").toString());
+                                        Integer serves = Integer.parseInt(recipeObj.get("serves").toString());
+                                        d.setServes(serves);
+                                        d.setCookTime(recipeObj.get("cook_time").toString());
+                                        d.setPrepTime(recipeObj.get("prep_time").toString());
+                                        listAdapter.add(d);
 
-                                        String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + recipeObj.get("image_id").toString();
-                                        if (recipeObj.get("extension").toString() != null && !recipeObj.get("extension").toString().isEmpty()) {
-                                            imageUrl = imageUrl + "." + recipeObj.get("extension").toString();
+                                        if (!recipeObj.get("image_id").toString().equals("null") && !recipeObj.get("image_id").toString().isEmpty()) {
+
+                                            String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + recipeObj.get("image_id").toString();
+                                            if (recipeObj.get("extension").toString() != null && !recipeObj.get("extension").toString().isEmpty()) {
+                                                imageUrl = imageUrl + "." + recipeObj.get("extension").toString();
+                                            }
+
+                                            //Call AsyncTask to convert Url to Bmp, pass json object
+                                            new DownloadImageTask(counter, d).execute(imageUrl);
+
                                         }
 
-                                        //Call AsyncTask to convert Url to Bmp, pass json object
-                                        new DownloadImageTask(counter,d).execute(imageUrl);
-
+                                        counter++;
                                     }
-
-                                    counter++;
                                 }
                             }
                         }
@@ -579,6 +602,7 @@ public class BrowseFragment extends Fragment {
         private class ViewHolder {
             ImageView image;
             TextView titleText;
+            TextView draftText;
             TextView userText;
             TextView servesText;
             TextView prepText;
@@ -599,6 +623,7 @@ public class BrowseFragment extends Fragment {
                 convertView = mInflater.inflate(R.layout.browse_recipe_row, null);
                 holder = new ViewHolder();
                 holder.titleText = (TextView) convertView.findViewById(R.id.rowTitle);
+                holder.draftText = (TextView) convertView.findViewById(R.id.rowDraft);
                 holder.userText = (TextView) convertView.findViewById(R.id.rowUser);
                 holder.prepText = (TextView) convertView.findViewById(R.id.prepTime);
                 holder.servesText = (TextView) convertView.findViewById(R.id.serves);
@@ -611,6 +636,7 @@ public class BrowseFragment extends Fragment {
 
             holder.titleText.setText(rowItem.getTitle());
             holder.userText.setText(rowItem.getUser());
+            holder.draftText.setText(rowItem.getDraft());
 
             if (rowItem.getServes() > 0) {
                 String serves = Integer.toString(rowItem.getServes());
@@ -729,6 +755,7 @@ public class BrowseFragment extends Fragment {
     class RecipeListData {
         private int id;
         private String title;
+        private String draft;
         private String user;
         private Bitmap image;
         private int serves;
@@ -747,6 +774,8 @@ public class BrowseFragment extends Fragment {
         public String getTitle() {
             return this.title;
         }
+
+        public String getDraft() { return this.draft; }
 
         public String getUser() { return this.user; }
 
@@ -769,6 +798,8 @@ public class BrowseFragment extends Fragment {
         public void setUser(String aUser) {
             this.user = aUser;
         }
+
+        public void setDraft(String aDraft) { this.draft = aDraft; }
 
         public void setImage(Bitmap aImage) {
             this.image = aImage;

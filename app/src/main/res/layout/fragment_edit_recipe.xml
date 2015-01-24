@@ -176,9 +176,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_above="@+id/save_recipe"
+            android:layout_above="@+id/publish_toggle"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+
+        <ToggleButton
+            android:id="@+id/publish_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="Published"
+            android:textOff="Draft"
+            android:layout_above="@+id/save_recipe"
+            android:layout_gravity="left" />
 
         <Button
             android:id="@+id/save_recipe"
