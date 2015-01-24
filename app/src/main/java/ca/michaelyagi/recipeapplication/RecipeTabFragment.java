@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -475,13 +476,16 @@ public class RecipeTabFragment extends Fragment {
 
         int counter = 1;
 
+        LinearLayout ll;
+
+        if (recipeData.published == 0) {
+            TextView draftText = (TextView)svLayout.findViewById(R.id.detailDraftTextView);
+            draftText.setText("Draft");
+        }
+
         //Set the title
         TextView titleText = (TextView)svLayout.findViewById(R.id.detailTitleTextView);
-        String titleString = recipeData.title;
-        if (recipeData.published == 0) {
-            titleString = titleString + " - DRAFT";
-        }
-        titleText.setText(Html.fromHtml(titleString));
+        titleText.setText(Html.fromHtml(recipeData.title));
 
         //Set user
         TextView userText = (TextView)svLayout.findViewById(R.id.detailUserTextView);
@@ -601,7 +605,7 @@ public class RecipeTabFragment extends Fragment {
 
             LayoutInflater inflater = LayoutInflater.from(super.getActivity().getApplicationContext());
             View view = inflater.inflate(R.layout.fragment_recipe_detail, null);
-            LinearLayout ll = new LinearLayout(super.getActivity());
+            ll = new LinearLayout(super.getActivity());
             ll.setOrientation(LinearLayout.HORIZONTAL);
             ll.setGravity(Gravity.CENTER);
             Iterator<String> tagIt = recipeData.tagList.iterator();

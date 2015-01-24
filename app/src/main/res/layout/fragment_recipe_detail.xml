@@ -14,15 +14,27 @@
         android:id="@+id/detailLayout" >
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/detailTitleTextView"
+            android:id="@+id/detailDraftTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_red_light"
+            android:gravity="center_horizontal"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+        </TextView>
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/detailTitleTextView"
+            android:layout_below="@+id/detailDraftTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textAlignment="center"
             android:textStyle="bold"
             android:gravity="center_horizontal"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
         </TextView>
