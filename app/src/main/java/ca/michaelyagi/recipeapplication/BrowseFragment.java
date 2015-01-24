@@ -31,6 +31,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -591,12 +593,19 @@ public class BrowseFragment extends Fragment {
         private final Context context;
         private final List<RecipeListData> data;
         private final int layoutResourceId;
+        private Animation animation1;
+        private Animation animation2;
+        private ImageView flipImage;
+        private boolean isChecked = false;
 
         public BrowseAdapter(Context context, int layoutResourceId, List<RecipeListData> data) {
             super(context, layoutResourceId, data);
             this.context = context;
             this.data = data;
             this.layoutResourceId = layoutResourceId;
+
+            animation1 = AnimationUtils.loadAnimation(context, R.anim.to_middle);
+            animation2 = AnimationUtils.loadAnimation(context, R.anim.from_middle);
         }
 
         private class ViewHolder {
@@ -671,15 +680,61 @@ public class BrowseFragment extends Fragment {
 
                     @Override
                     public void onClick(View view) {
+
+                        flipImage = (ImageView) view;
+                        final RecipeListData rowItem = getItem(vPosition);
+
                         getActivity().invalidateOptionsMenu();
+
+                        flipImage.clearAnimation();
+                        flipImage.setAnimation(animation1);
+                        flipImage.startAnimation(animation1);
+
+                        Animation.AnimationListener animListener = new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                                if (animation==animation1) {
+                                    if (isChecked) {
+                                        if (rowItem.getImage() == null) {
+                                            char firstCharacterTitle = rowItem.getTitle().toUpperCase().charAt(0);
+                                            int color = ColorGenerator.DEFAULT.getColor(firstCharacterTitle);
+                                            CharacterDrawable drawable = new CharacterDrawable(firstCharacterTitle, color);
+                                            flipImage.setImageDrawable(drawable);
+                                        } else {
+                                            flipImage.setImageBitmap(rowItem.getImage());
+                                        }
+                                    } else {
+                                        flipImage.setBackgroundColor(Color.LTGRAY);
+                                        flipImage.setImageResource(R.drawable.ic_action_accept);
+                                    }
+                                    flipImage.clearAnimation();
+                                    flipImage.setAnimation(animation2);
+                                    flipImage.startAnimation(animation2);
+                                } else {
+                                    isChecked=!isChecked;
+                                }
+                            }
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                                // TODO Auto-generated method stub
+                            }
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                // TODO Auto-generated method stub
+                            }
+
+                        };
+
+                        animation1.setAnimationListener(animListener);
+                        animation2.setAnimationListener(animListener);
+
                         if (((ListView) vParent).isItemChecked(vPosition)) {
                             ((ListView) vParent).setItemChecked(vPosition, false);
-                            ((ListView) vParent).getChildAt(vPosition).setBackgroundColor(Color.WHITE);
                         } else {
                             ((ListView) vParent).setItemChecked(vPosition, true);
-                            ((ListView) vParent).getChildAt(vPosition).setBackgroundColor(Color.LTGRAY);
                         }
                     }
+
                 });
             }
 
