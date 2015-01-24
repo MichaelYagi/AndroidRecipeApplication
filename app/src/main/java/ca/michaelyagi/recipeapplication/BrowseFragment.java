@@ -194,8 +194,15 @@ public class BrowseFragment extends Fragment {
         MenuItem deleteRecipes = menu.findItem(R.id.menu_item_delete_recipes);
         deleteRecipes.setVisible(false);
 
+        MenuItem searchRecipes = menu.findItem(R.id.menu_item_search);
+        searchRecipes.setVisible(true);
+
+        mListener.showDrawerToggle(true);
+
         if (((ListView) browseListView).getCheckedItemCount() > 0) {
             deleteRecipes.setVisible(true);
+            searchRecipes.setVisible(false);
+            mListener.showDrawerToggle(false);
         }
     }
 
