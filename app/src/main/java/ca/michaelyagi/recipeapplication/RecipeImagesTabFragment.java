@@ -67,22 +67,16 @@ import java.util.List;
  */
 public class RecipeImagesTabFragment extends Fragment {
 
+    private ScrollView svLayout;
+    private FragmentTransaction fragmentTransaction;
+
     private int recipeId;
     private String recipeUser;
 
-    private ScrollView svLayout;
-    private FragmentActivity faActivity;
-
-    private FragmentTransaction fragmentTransaction;
-    List<String> imageUrlList = new ArrayList<String>();
     private List<Bitmap> imageBmps = new ArrayList<Bitmap>();
-    private List<ImageView> imageViews = new ArrayList<ImageView>();
     private ImageGalleryAdapter imageAdapter;
-    private ShareActionProvider mShareActionProvider;
     private String recipeTitle;
-
-    GridView gridViewGallery;
-
+    private GridView gridViewGallery;
     private int COL_NUM = 2;
 
     private Animator mCurrentAnimator;
@@ -93,7 +87,6 @@ public class RecipeImagesTabFragment extends Fragment {
     /******************************************************************/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        faActivity = (FragmentActivity) super.getActivity();
         svLayout = (ScrollView) inflater.inflate(R.layout.fragment_recipe_images_detail, container, false);
 
         //Get arguments passed

@@ -51,32 +51,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//import android.app.Fragment;
-//import android.app.FragmentTransaction;
-
 /**
  * Created by Michael on 12/26/2014.
  */
 public class RecipeTabFragment extends Fragment {
 
+    private ScrollView svLayout;
+    private FragmentTransaction fragmentTransaction;
+
     private int recipeId;
     private String recipeUser;
-
-    private ScrollView svLayout;
-    private FragmentActivity faActivity;
-
-    private FragmentTransaction fragmentTransaction;
-    private ShareActionProvider mShareActionProvider;
     private String recipeTitle;
-
-    private int COL_NUM = 2;
 
     /******************************************************************/
     // On create
     /******************************************************************/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        faActivity  = (FragmentActivity)    super.getActivity();
         svLayout    = (ScrollView)    inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
 
