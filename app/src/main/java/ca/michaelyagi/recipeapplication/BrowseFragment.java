@@ -347,6 +347,7 @@ public class BrowseFragment extends Fragment {
                                 RecipeListData d = new RecipeListData();
                                 Integer recipeId = Integer.parseInt(jsonObj.get("id").toString());
                                 d.setId(recipeId);
+                                d.isChecked = false;
                                 d.setTitle(jsonObj.get("title").toString());
                                 String draftText = "";
                                 if (!this.ShowOnlyPublished) {
@@ -390,6 +391,7 @@ public class BrowseFragment extends Fragment {
 
                                         Integer recipeId = Integer.parseInt(recipeObj.get("id").toString());
                                         d.setId(recipeId);
+                                        d.isChecked = false;
                                         d.setTitle(recipeObj.get("title").toString());
                                         String draftText = "";
                                         if (!this.ShowOnlyPublished && !recipeObj.getString("published").equals("1")) {
@@ -600,10 +602,9 @@ public class BrowseFragment extends Fragment {
         private final Context context;
         private final List<RecipeListData> data;
         private final int layoutResourceId;
+        private int lastPosition = -1;
         private Animation animation1;
         private Animation animation2;
-        private ImageView flipImage;
-        private boolean isChecked = false;
 
         public BrowseAdapter(Context context, int layoutResourceId, List<RecipeListData> data) {
             super(context, layoutResourceId, data);
@@ -631,8 +632,8 @@ public class BrowseFragment extends Fragment {
             final int vPosition = position;
             final ViewGroup vParent = parent;
 
-            ViewHolder holder = null;
-            RecipeListData rowItem = getItem(position);
+            final ViewHolder holder;
+            final RecipeListData rowItem = getItem(position);
 
             LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
@@ -671,13 +672,18 @@ public class BrowseFragment extends Fragment {
                 holder.cookText.setText(cook);
             }
 
-            if (rowItem.getImage() == null) {
-                char firstCharacterTitle = rowItem.getTitle().toUpperCase().charAt(0);
-                int color = ColorGenerator.DEFAULT.getColor(firstCharacterTitle);
-                CharacterDrawable drawable = new CharacterDrawable(firstCharacterTitle, color);
-                holder.image.setImageDrawable(drawable);
+            if (!rowItem.isChecked) {
+                if (rowItem.getImage() == null) {
+                    char firstCharacterTitle = rowItem.getTitle().toUpperCase().charAt(0);
+                    int color = ColorGenerator.DEFAULT.getColor(firstCharacterTitle);
+                    CharacterDrawable drawable = new CharacterDrawable(firstCharacterTitle, color);
+                    holder.image.setImageDrawable(drawable);
+                } else {
+                    holder.image.setImageBitmap(rowItem.getImage());
+                }
             } else {
-                holder.image.setImageBitmap(rowItem.getImage());
+                holder.image.setBackgroundColor(Color.LTGRAY);
+                holder.image.setImageResource(R.drawable.ic_action_accept);
             }
 
             if (args != null && args.getBoolean("viewbyuser_filter") && holder.userText.getText().toString().equals(SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()))) {
@@ -688,45 +694,58 @@ public class BrowseFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
-                        flipImage = (ImageView) view;
-                        final RecipeListData rowItem = getItem(vPosition);
-
-                        getActivity().invalidateOptionsMenu();
-
-                        flipImage.clearAnimation();
-                        flipImage.setAnimation(animation1);
-                        flipImage.startAnimation(animation1);
+                        holder.image.clearAnimation();
+                        holder.image.setAnimation(animation1);
+                        holder.image.startAnimation(animation1);
 
                         Animation.AnimationListener animListener = new Animation.AnimationListener() {
                             @Override
                             public void onAnimationStart(Animation animation) {
                                 if (animation==animation1) {
-                                    if (isChecked) {
+                                    if (rowItem.isChecked) {
                                         if (rowItem.getImage() == null) {
                                             char firstCharacterTitle = rowItem.getTitle().toUpperCase().charAt(0);
                                             int color = ColorGenerator.DEFAULT.getColor(firstCharacterTitle);
                                             CharacterDrawable drawable = new CharacterDrawable(firstCharacterTitle, color);
-                                            flipImage.setImageDrawable(drawable);
+                                            holder.image.setImageDrawable(drawable);
                                         } else {
-                                            flipImage.setImageBitmap(rowItem.getImage());
+                                            holder.image.setImageBitmap(rowItem.getImage());
                                         }
+                                        rowItem.isChecked = false;
                                     } else {
-                                        flipImage.setBackgroundColor(Color.LTGRAY);
-                                        flipImage.setImageResource(R.drawable.ic_action_accept);
+                                        holder.image.setBackgroundColor(Color.LTGRAY);
+                                        holder.image.setImageResource(R.drawable.ic_action_accept);
+                                        rowItem.isChecked = true;
                                     }
-                                    flipImage.clearAnimation();
-                                    flipImage.setAnimation(animation2);
-                                    flipImage.startAnimation(animation2);
+                                    holder.image.clearAnimation();
+                                    holder.image.setAnimation(animation2);
+                                    holder.image.startAnimation(animation2);
                                 } else {
-                                    isChecked=!isChecked;
+                                    rowItem.isChecked = !rowItem.isChecked;
+
+                                    if (rowItem.isChecked) {
+                                        if (rowItem.getImage() == null) {
+                                            char firstCharacterTitle = rowItem.getTitle().toUpperCase().charAt(0);
+                                            int color = ColorGenerator.DEFAULT.getColor(firstCharacterTitle);
+                                            CharacterDrawable drawable = new CharacterDrawable(firstCharacterTitle, color);
+                                            holder.image.setImageDrawable(drawable);
+                                        } else {
+                                            holder.image.setImageBitmap(rowItem.getImage());
+                                        }
+                                        rowItem.isChecked = false;
+                                    } else {
+                                        holder.image.setBackgroundColor(Color.LTGRAY);
+                                        holder.image.setImageResource(R.drawable.ic_action_accept);
+                                        rowItem.isChecked = true;
+                                    }
                                 }
                             }
                             @Override
-                            public void onAnimationRepeat(Animation animation) {
+                            public void onAnimationEnd(Animation animation) {
                                 // TODO Auto-generated method stub
                             }
                             @Override
-                            public void onAnimationEnd(Animation animation) {
+                            public void onAnimationRepeat(Animation animation) {
                                 // TODO Auto-generated method stub
                             }
 
@@ -734,6 +753,8 @@ public class BrowseFragment extends Fragment {
 
                         animation1.setAnimationListener(animListener);
                         animation2.setAnimationListener(animListener);
+
+                        getActivity().invalidateOptionsMenu();
 
                         if (((ListView) vParent).isItemChecked(vPosition)) {
                             ((ListView) vParent).setItemChecked(vPosition, false);
@@ -816,6 +837,7 @@ public class BrowseFragment extends Fragment {
 
     class RecipeListData {
         private int id;
+        boolean isChecked;
         private String title;
         private String draft;
         private String user;
