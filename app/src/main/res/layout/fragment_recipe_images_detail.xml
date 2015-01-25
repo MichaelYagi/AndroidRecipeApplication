@@ -7,34 +7,47 @@
     android:layout_height="match_parent"
     android:layout_marginTop="55dp" >
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="3dp"
-        android:id="@+id/imagesLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="match_parent">
 
-        <GridView
-            android:id="@+id/gridView"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="false"
-            android:horizontalSpacing="3dp"
-            android:verticalSpacing="3dp"
-            android:stretchMode="columnWidth" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="3dp"
+            android:id="@+id/imagesLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
-        <TextView
-            android:id="@+id/galleryText"
+            <GridView
+                android:id="@+id/gridView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:horizontalSpacing="3dp"
+                android:verticalSpacing="3dp"
+                android:stretchMode="columnWidth" />
+
+            <TextView
+                android:id="@+id/galleryText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/expanded_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
 </ScrollView>
