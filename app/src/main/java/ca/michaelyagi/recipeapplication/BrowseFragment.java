@@ -212,6 +212,10 @@ public class BrowseFragment extends Fragment {
         final MenuItem anItem = item;
 
         switch (anItem.getItemId()) {
+            case android.R.id.home:
+                //called when the up carat in actionbar is pressed
+                getActivity().onBackPressed();
+                return true;
             case R.id.menu_item_delete_recipes:
 
                 //Check if at least one item checked and show garbage icon in actionbar
