@@ -90,9 +90,9 @@ import java.util.regex.Pattern;
  */
 public class EditRecipeFragment extends Fragment {
 
-    int recipeId;
-    String recipeUser;
-    String recipeTitle;
+    private int recipeId;
+    private String recipeUser;
+    private String recipeTitle;
 
     private ScrollView llLayout;
     private FragmentActivity faActivity;

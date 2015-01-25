@@ -44,14 +44,12 @@ import java.util.Iterator;
  */
 public class RecoverFragment extends Fragment {
     private RelativeLayout llLayout;
-    private FragmentActivity faActivity;
     private EditText emailEdit;
     private Button recoverButton;
     private String email;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        faActivity  = (FragmentActivity)    super.getActivity();
         llLayout    = (RelativeLayout)    inflater.inflate(R.layout.fragment_recover, container, false);
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recover");
 

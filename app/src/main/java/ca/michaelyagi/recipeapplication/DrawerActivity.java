@@ -33,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -62,13 +63,10 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
     DrawerAdapter drawerListAdapter;
     List<DrawerListData> drawerItems = new ArrayList<DrawerListData>();
     private ActionBarDrawerToggle drawerToggle;
-    private ShareActionProvider mShareActionProvider;
 
-    AutoCompleteTextView autoCompleteTextView;
     ArrayAdapter<RecipeListData> listAdapter;
     // Create and populate a List of recipes
     List<RecipeListData> recipeList = new ArrayList<RecipeListData>();
-    List<String> searchSuggestions;
 
     public static int LAST_DRAWER_HIGHLIGHT_POSITION = 0;
 
@@ -82,7 +80,6 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar .setBackgroundDrawable(new ColorDrawable(Color.parseColor("#012345")));
 
         //Initial drawer items
         DrawerListData d;
@@ -146,8 +143,6 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         //Set Drawer header
         TextView headerUser = (TextView) drawerHeader.findViewById(R.id.header_user);
         TextView headerEmail = (TextView) drawerHeader.findViewById(R.id.header_email);
-        String curHeaderUser = headerUser.getText().toString();
-        String curHeaderEmail = headerEmail.getText().toString();
         String headerUserStr;
         String headerEmailStr;
         if (SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()).length() == 0) {
@@ -161,11 +156,10 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         headerEmail.setText(headerEmailStr);
         drawerList.addHeaderView(drawerHeader, null, false);
 
-        drawerToggle = new ActionBarDrawerToggle(this,
-                drawerLayout,
-                R.string.open_drawer,
-                R.string.close_drawer) {
+        drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.open_drawer,R.string.close_drawer) {
+
             public void onDrawerStateChanged(int newState) {
+
                 highlightDrawerItem(LAST_DRAWER_HIGHLIGHT_POSITION);
 
                 //Set Drawer header
@@ -175,6 +169,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
                 String curHeaderEmail = headerEmail.getText().toString();
                 String headerUserStr;
                 String headerEmailStr;
+
                 if (SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()).length() == 0) {
                     headerUserStr = "Guest";
                     headerEmailStr = "";
@@ -182,6 +177,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
                     headerUserStr = SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext());
                     headerEmailStr = SaveSharedPreference.getEmail(RecipeBookApplication.getAppContext());
                 }
+
                 if (!curHeaderUser.equals(headerUserStr) && !curHeaderEmail.equals(headerEmailStr)) {
                     headerUser.setText(headerUserStr);
                     headerEmail.setText(headerEmailStr);
@@ -252,83 +248,6 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
             //Else pop the stack
         } else {
             fragmentManager.popBackStack();
-        }
-    }
-
-    /******************************************************************/
-    // Async Tasks
-    /******************************************************************/
-    //Search for a recipe by search term
-    class SearchRecipeTask extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... uri) {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpResponse response;
-            String responseString = null;
-            try {
-                response = httpclient.execute(new HttpGet(uri[0]));
-                StatusLine statusLine = response.getStatusLine();
-                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    response.getEntity().writeTo(out);
-                    out.close();
-                    responseString = out.toString();
-                } else{
-                    //Closes the connection.
-                    response.getEntity().getContent().close();
-                    throw new IOException(statusLine.getReasonPhrase());
-                }
-            } catch (IOException e) {
-                //TODO Handle problems..
-            }
-
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            //Result is responseString from request
-            super.onPostExecute(result);
-
-            try {
-                //Turn response into JSON object
-                JSONObject jsonObj = new JSONObject(result);
-
-                //Get all keys of JSON object
-                Iterator keys = jsonObj.keys();
-
-                //If request was successful
-                if (jsonObj.getString("retval").equals("1") && jsonObj.getString("message").equals("Success")) {
-                    String tempKey = "";
-
-                    recipeList.clear();
-                    listAdapter.clear();
-                    //Loop through objects by key
-                    while (keys.hasNext()) {
-                        tempKey = keys.next().toString();
-
-                        //Don't include the retval or message objects
-                        if (!tempKey.equals("retval") && !tempKey.equals("message")) {
-
-                            JSONObject recipeObj = new JSONObject(jsonObj.get(tempKey).toString());
-                            RecipeListData d = new RecipeListData();
-                            Integer anInteger = Integer.parseInt(recipeObj.get("id").toString());
-                            d.setId(anInteger);
-                            d.setTitle(recipeObj.get("title").toString());
-                            d.setUser(recipeObj.get("user").toString());
-                            recipeList.add(d);
-                        }
-
-                    }
-
-                    listAdapter.addAll(recipeList);
-                    listAdapter.notifyDataSetChanged();
-                }
-
-            } catch (JSONException e) {
-                //TODO
-            }
         }
     }
 
@@ -440,7 +359,9 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         }
 
         //Non overflow items
-        //Search in actionbar
+        /******************************************************************/
+        // Search Recipes
+        /******************************************************************/
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         searchItem.setVisible(true);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);

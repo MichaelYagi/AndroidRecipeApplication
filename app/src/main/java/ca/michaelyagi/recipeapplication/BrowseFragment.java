@@ -69,16 +69,14 @@ import java.util.List;
  * Created by Michael on 12/27/2014.
  */
 public class BrowseFragment extends Fragment {
-    ListView browseListView;
-    BrowseAdapter listAdapter;
+    private ListView browseListView;
+    private BrowseAdapter listAdapter;
     // Create and populate a List of recipes
-    List<RecipeListData> recipeList = new ArrayList<RecipeListData>();
-    MenuItem deleteRecipesItem;
-    Bundle args;
+    private List<RecipeListData> recipeList = new ArrayList<RecipeListData>();
+    private Bundle args;
 
-    private RelativeLayout        llLayout;
-    private boolean popNext = false;
-    TextView browseText;
+    private RelativeLayout llLayout;
+    private TextView browseText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
