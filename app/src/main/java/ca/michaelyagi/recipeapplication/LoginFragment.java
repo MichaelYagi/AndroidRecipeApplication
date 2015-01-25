@@ -78,7 +78,7 @@ public class LoginFragment extends Fragment {
 
                     //Verify user credentials
                     //Make GET request and add to list
-                    new VerifyCredTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/user/" + username + "/verify");
+                    new VerifyCredTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/user/" + username + "/verify");
                 }
             }
         });

@@ -15,12 +15,14 @@ import java.util.Arrays;
  * Created by Michael on 12/28/2014.
  */
 public class SaveSharedPreference {
+
     private static final String[] admins = {"myagi"};
     static final String PREF_USERNAME= "username";
     static final String PREF_PASSWORD = "password";
     static final String PREF_EMAIL = "email";
     static final String PREF_ID = "0";
-
+    static final String PREF_API_SERVER = "";
+    static final String PREF_WEBSITE_URL = "";
 
     static SharedPreferences getSharedPreferences(Context ctx) {
         return PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -32,6 +34,22 @@ public class SaveSharedPreference {
         } else {
             return false;
         }
+    }
+
+    public static String getApiServer(Context ctx) {
+        Editor editor = getSharedPreferences(ctx).edit();
+        editor.putString(PREF_API_SERVER, "http://myagi.asuscomm.com:9245");
+        editor.commit();
+
+        return getSharedPreferences(ctx).getString(PREF_API_SERVER,"");
+    }
+
+    public static String getWebsiteUrl(Context ctx) {
+        Editor editor = getSharedPreferences(ctx).edit();
+        editor.putString(PREF_WEBSITE_URL, "http://myagi.asuscomm.com:9244");
+        editor.commit();
+
+        return getSharedPreferences(ctx).getString(PREF_WEBSITE_URL,"");
     }
 
     public static void setUsername(Context ctx, String username) {

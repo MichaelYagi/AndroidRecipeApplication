@@ -110,7 +110,7 @@ public class BrowseFragment extends Fragment {
         }
         if (getArguments() != null && getArguments().getString("user") != null && getArguments().getBoolean("viewbyuser_filter") && getArguments().getString("user").length() > 0) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("User Recipes");
-            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + getArguments().getString("user"));
+            new RequestBrowseTask(true).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipesByType/user/" + getArguments().getString("user"));
         } else if (getArguments() != null && getArguments().getString("keyword") != null && getArguments().getBoolean("viewbytag_filter") && getArguments().getString("keyword").length() > 0) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("keyword") + "\"");
             String tag = "";
@@ -119,7 +119,7 @@ public class BrowseFragment extends Fragment {
             } catch(UnsupportedEncodingException e) {
                 //TODO: Catch URLEncoder exception
             }
-            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/tag/" + tag);
+            new RequestBrowseTask(true).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipesByType/tag/" + tag);
             //Get recipes by search term
         } else if (getArguments() != null && getArguments().getString("searchterm") != null && getArguments().getBoolean("viewbysearch_filter") && getArguments().getString("searchterm").length() > 0) {
             ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("\"" + getArguments().getString("searchterm") + "\"");
@@ -129,14 +129,14 @@ public class BrowseFragment extends Fragment {
             } catch (UnsupportedEncodingException e) {
                 //TODO: Catch URLEncoder exception
             }
-            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/search/" + searchTerm);
+            new RequestBrowseTask(true).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipesByType/search/" + searchTerm);
         } else if (getArguments() != null && getArguments().getBoolean("viewbyuser_filter")) {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("My Recipes");
-            new RequestBrowseTask(false).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipesByType/user/" + SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
+            new RequestBrowseTask(false).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipesByType/user/" + SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
         //Get all recipes
         } else {
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Browse");
-            new RequestBrowseTask(true).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipes");
+            new RequestBrowseTask(true).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipes");
         }
 
         //On click listener when user clicks on a browse item
@@ -230,7 +230,7 @@ public class BrowseFragment extends Fragment {
                                         if (((ListView) browseListView).isItemChecked(x)) {
                                             ((ListView) browseListView).setItemChecked(x,false);
                                             //DELETE request to delete this recipe
-                                            new DeleteRequestTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeList.get(x).getId());
+                                            new DeleteRequestTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeList.get(x).getId());
                                             recipeList.remove(listAdapter.getItem(x));
                                         }
 
@@ -362,7 +362,7 @@ public class BrowseFragment extends Fragment {
                                 listAdapter.add(d);
 
                                 if (jsonObj.get("image_id") != null && !jsonObj.get("image_id").toString().isEmpty()) {
-                                    String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonObj.get("image_id").toString();
+                                    String imageUrl = SaveSharedPreference.getWebsiteUrl(RecipeBookApplication.getAppContext()) + "/media/recipeimages/" + recipeId + "/" + jsonObj.get("image_id").toString();
                                     if (jsonObj.get("extension") != null && !jsonObj.get("extension").toString().isEmpty()) {
                                         imageUrl = imageUrl + "." + jsonObj.get("extension").toString();
                                     }
@@ -407,7 +407,7 @@ public class BrowseFragment extends Fragment {
 
                                         if (!recipeObj.get("image_id").toString().equals("null") && !recipeObj.get("image_id").toString().isEmpty()) {
 
-                                            String imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + recipeObj.get("image_id").toString();
+                                            String imageUrl = SaveSharedPreference.getWebsiteUrl(RecipeBookApplication.getAppContext()) + "/media/recipeimages/" + recipeId + "/" + recipeObj.get("image_id").toString();
                                             if (recipeObj.get("extension").toString() != null && !recipeObj.get("extension").toString().isEmpty()) {
                                                 imageUrl = imageUrl + "." + recipeObj.get("extension").toString();
                                             }

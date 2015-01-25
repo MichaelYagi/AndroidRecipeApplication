@@ -107,7 +107,7 @@ public class RecipeImagesTabFragment extends Fragment {
         setHasOptionsMenu(true);
 
         //Make GET request to see this recipe
-        new GetRecipeRequestTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeId);
+        new GetRecipeRequestTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
 
         return svLayout;
     }
@@ -146,9 +146,9 @@ public class RecipeImagesTabFragment extends Fragment {
                 email.putExtra(Intent.EXTRA_SUBJECT, subject);
                 String message;
                 if (SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()).length() == 0) {
-                    message = SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()) + " wants to share '" + recipeTitle + "'<br><br>View this recipe <a href='http://" + Utils.getWebsiteUrl() + "/food/recipe/id/" + recipeId + "'>here</a>";
+                    message = SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()) + " wants to share '" + recipeTitle + "'<br><br>View this recipe <a href='" + SaveSharedPreference.getWebsiteUrl(RecipeBookApplication.getAppContext()) + "/food/recipe/id/" + recipeId + "'>here</a>";
                 } else {
-                    message = "Someone has shared '" + recipeTitle + "'<br><br>View this recipe <a href='http://" + Utils.getWebsiteUrl() + "/food/recipe/id/" + recipeId + "'>here</a>";
+                    message = "Someone has shared '" + recipeTitle + "'<br><br>View this recipe <a href='" + SaveSharedPreference.getWebsiteUrl(RecipeBookApplication.getAppContext()) + "/food/recipe/id/" + recipeId + "'>here</a>";
                 }
                 email.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(new StringBuilder().append(message).toString()));
                 email.setType("text/html");
@@ -183,7 +183,7 @@ public class RecipeImagesTabFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //DELETE request to delete this recipe
-                                new DeleteRequestTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeId);
+                                new DeleteRequestTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
                             }
 
                         })
@@ -376,7 +376,7 @@ public class RecipeImagesTabFragment extends Fragment {
                                     for (int i = 0; i < imageInfo.length(); i++) {
                                         JSONObject jsonImageObj = new JSONObject(imageInfo.getString(i));
 
-                                        imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonImageObj.get("id").toString();
+                                        imageUrl = SaveSharedPreference.getWebsiteUrl(RecipeBookApplication.getAppContext()) + "/media/recipeimages/" + recipeId + "/" + jsonImageObj.get("id").toString();
                                         if (jsonImageObj.get("extension") != null && !jsonImageObj.get("extension").toString().isEmpty()) {
                                             imageUrl = imageUrl + "." + jsonImageObj.get("extension").toString();
                                         }

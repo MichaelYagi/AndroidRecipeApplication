@@ -466,7 +466,7 @@ public class DetailFragment extends Fragment {
                                     for (int i = 0; i < imageInfo.length(); i++) {
                                         JSONObject jsonImageObj = new JSONObject(imageInfo.getString(i));
 
-                                        imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonImageObj.get("id").toString();
+                                        imageUrl = SaveSharedPreference.getWebsiteUrl(RecipeBookApplication.getAppContext()) + "/media/recipeimages/" + recipeId + "/" + jsonImageObj.get("id").toString();
                                         if (jsonImageObj.get("extension") != null && !jsonImageObj.get("extension").toString().isEmpty()) {
                                             imageUrl = imageUrl + "." + jsonImageObj.get("extension").toString();
                                         }

@@ -170,7 +170,7 @@ public class EditRecipeFragment extends Fragment {
                         //TODO: Catch URLEncoder exception
                     }
                     //Get a list of all tags on searchTerm
-                    new TagSearchTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/tag/" + searchTerm);
+                    new TagSearchTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/tag/" + searchTerm);
                 }
             }
 
@@ -198,7 +198,7 @@ public class EditRecipeFragment extends Fragment {
         /******************************************************************/
         //Get Recipe Details if editing
         if (recipeId > 0) {
-            AsyncTask recipeTask = new RequestRecipeTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeId);
+            AsyncTask recipeTask = new RequestRecipeTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
         } else {
             RecipeData dummy = new RecipeData();
             createEditDetailPage(dummy);
@@ -286,10 +286,10 @@ public class EditRecipeFragment extends Fragment {
                     boolean isNewRecipe = false;
                     AsyncTask uploadRecipeTask;
                     if (recipeId > 0) {
-                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj,isNewRecipe).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeId);
+                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj,isNewRecipe).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
                     } else {
                         isNewRecipe = true;
-                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj,isNewRecipe).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe");
+                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj,isNewRecipe).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe");
                     }
 
                     //Image Handling
@@ -306,12 +306,12 @@ public class EditRecipeFragment extends Fragment {
                         //Delete Images
                         if (!imageViewObj.newImage && imageViewObj.removeFlag) {
                             counter++;
-                            new DeleteRecipeImageTask(isLastImage).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeId + "/image/" + imageViewObj.imageId);
+                            new DeleteRecipeImageTask(isLastImage).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId + "/image/" + imageViewObj.imageId);
                             //Add Image
                         } else if (imageViewObj.newImage) {
                             counter++;
                             if (!isNewRecipe) {
-                                new AddRecipeImageTask(imageViewObj.imageBmp, imageViewObj.viewId, isLastImage).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeId + "/image");
+                                new AddRecipeImageTask(imageViewObj.imageBmp, imageViewObj.viewId, isLastImage).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId + "/image");
                             }
 
                         }
@@ -591,7 +591,7 @@ public class EditRecipeFragment extends Fragment {
                                     for (int i = 0; i < imageInfo.length(); i++) {
                                         JSONObject jsonImageObj = new JSONObject(imageInfo.getString(i));
 
-                                        imageUrl = "http://" + Utils.getWebsiteUrl() + "/media/recipeimages/" + recipeId + "/" + jsonImageObj.get("id").toString();
+                                        imageUrl = SaveSharedPreference.getWebsiteUrl(RecipeBookApplication.getAppContext()) + "/media/recipeimages/" + recipeId + "/" + jsonImageObj.get("id").toString();
                                         if (jsonImageObj.get("extension") != null && !jsonImageObj.get("extension").toString().isEmpty()) {
                                             imageUrl = imageUrl + "." + jsonImageObj.get("extension").toString();
                                         }
@@ -727,7 +727,7 @@ public class EditRecipeFragment extends Fragment {
                             }
 
                             if (isNewRecipe) {
-                                new AddRecipeImageTask(imageViewObj.imageBmp, imageViewObj.viewId, isLastImage).execute("http://" + Utils.getApiServer() + "/api/v1/json/recipe/" + recipeId + "/image");
+                                new AddRecipeImageTask(imageViewObj.imageBmp, imageViewObj.viewId, isLastImage).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId + "/image");
                             }
 
                             //Delete Images

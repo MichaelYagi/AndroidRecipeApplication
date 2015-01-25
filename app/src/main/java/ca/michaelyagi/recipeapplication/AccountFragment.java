@@ -88,7 +88,7 @@ public class AccountFragment extends Fragment {
                 } else {
                     //Verify user credentials
                     //Make GET request and add to list
-                    new UpdateAccountTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/user/" + curUsername);
+                    new UpdateAccountTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/user/" + curUsername);
 
                 }
             }

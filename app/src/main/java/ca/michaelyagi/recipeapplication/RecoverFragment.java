@@ -68,7 +68,7 @@ public class RecoverFragment extends Fragment {
                     Toast.makeText(llLayout.getContext(), "Must enter a valid email...",Toast.LENGTH_SHORT).show();
                 } else {
                     //Recover account
-                    new RecoverPasswordTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/recover");
+                    new RecoverPasswordTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recover");
 
                 }
             }

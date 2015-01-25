@@ -81,28 +81,6 @@ public class Utils {
         return false;
     }
 
-    public static void setApiServer(String host, int port) {
-        apiServer = host;
-        if (port > 0) {
-            apiServer = apiServer + ":" + port;
-        }
-    }
-
-    public static String getApiServer() {
-        return apiServer;
-    }
-
-    public static void setWebsiteUrl(String host, int port) {
-        webUrl = host;
-        if (port > 0) {
-            webUrl = webUrl + ":" + port;
-        }
-    }
-
-    public static String getWebsiteUrl() {
-        return webUrl;
-    }
-
     public static AlertDialog reconnectDialog(Context mContext) {
         final Context context = mContext;
         final Activity activity = (Activity) context;

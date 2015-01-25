@@ -76,9 +76,6 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Utils.setApiServer("myagi.asuscomm.com",9245);
-        Utils.setWebsiteUrl("myagi.asuscomm.com",9244);
-
         setContentView(R.layout.activity_drawer);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

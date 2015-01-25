@@ -82,7 +82,7 @@ public class RegisterFragment extends Fragment {
                 } else if(!password.equals(passwordConfirm)) {
                     Toast.makeText(llLayout.getContext(), "Passwords do not match...",Toast.LENGTH_SHORT).show();
                 } else {
-                    new RegisterUserTask().execute("http://" + Utils.getApiServer() + "/api/v1/json/user");
+                    new RegisterUserTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/user");
                 }
             }
         });
