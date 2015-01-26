@@ -56,6 +56,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -420,7 +423,10 @@ public class RecipeImagesTabFragment extends Fragment {
                     bitmapImage = null;
 
                     InputStream in = new java.net.URL(obj.toString()).openStream();
-                    bitmapImage = BitmapFactory.decodeStream(in);
+
+                    BitmapFactory.Options options=new BitmapFactory.Options();
+                    options.inSampleSize = 8;
+                    bitmapImage = BitmapFactory.decodeStream(in,null,options);
 
                     imageBitmaps.add(bitmapImage);
 
