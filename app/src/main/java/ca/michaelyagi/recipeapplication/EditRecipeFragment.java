@@ -789,7 +789,8 @@ public class EditRecipeFragment extends Fragment {
             Bitmap mIcon11 = null;
             try {
                 InputStream in = new java.net.URL(uriDisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                //mIcon11 = BitmapFactory.decodeStream(in);
+                mIcon11 = decodeFile(in,uriDisplay);
             } catch (MalformedURLException e) {
                 try {
                     File file = new File(uriDisplay);
@@ -1798,6 +1799,35 @@ public class EditRecipeFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) target.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(target.getWindowToken(), 0);
         }
+    }
+
+    private Bitmap decodeFile(InputStream is,String uri){
+        Bitmap b = null;
+
+        //Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(is, null, o);
+
+        final int IMAGE_MAX_SIZE=2000;
+        int scale = 1;
+        if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
+            scale = (int)Math.pow(2, (int) Math.ceil(Math.log(IMAGE_MAX_SIZE /(double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+        }
+
+        //Decode with inSampleSize
+        try {
+            is.close();
+            is = new java.net.URL(uri).openStream();
+        } catch(IOException e) {
+            //TODO: malformed url exception
+        }
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        o2.inJustDecodeBounds = false;
+        b = BitmapFactory.decodeStream(is, null, o2);
+
+        return b;
     }
 
 }
