@@ -29,6 +29,7 @@ import android.util.Base64;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -131,6 +132,8 @@ public class EditRecipeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         faActivity  = (FragmentActivity)    super.getActivity();
         llLayout    = (ScrollView)    inflater.inflate(R.layout.fragment_edit_recipe, container, false);
+
+        setHasOptionsMenu(true);
 
         Bundle args = getArguments();
         if (args == null) {
@@ -400,6 +403,20 @@ public class EditRecipeFragment extends Fragment {
         });
 
         return llLayout;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+System.out.print(item.toString());
+        // Get item selected and deal with it
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //called when the up carat in actionbar is pressed
+                getFragmentManager().popBackStack();
+                return true;
+        }
+
+        return true;
     }
 
     /******************************************************************/
@@ -786,16 +803,15 @@ public class EditRecipeFragment extends Fragment {
 
         protected Bitmap doInBackground(String... urls) {
             uriDisplay = urls[0];
-            Bitmap mIcon11 = null;
+            Bitmap imageToUpload = null;
             try {
                 InputStream in = new java.net.URL(uriDisplay).openStream();
-                //mIcon11 = BitmapFactory.decodeStream(in);
-                mIcon11 = decodeFile(in,uriDisplay);
+                imageToUpload = FileUtils.decodeFile(in, uriDisplay);
             } catch (MalformedURLException e) {
                 try {
                     File file = new File(uriDisplay);
                     FileInputStream fileInputStream = new FileInputStream(file);
-                    mIcon11 = BitmapFactory.decodeStream(fileInputStream);
+                    imageToUpload = BitmapFactory.decodeStream(fileInputStream);
                 } catch(FileNotFoundException f) {
                     System.out.println("File not found:" + f.toString());
                 }
@@ -803,7 +819,7 @@ public class EditRecipeFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return mIcon11;
+            return imageToUpload;
         }
 
         protected void onPostExecute(Bitmap result) {
@@ -1799,35 +1815,6 @@ public class EditRecipeFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) target.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(target.getWindowToken(), 0);
         }
-    }
-
-    private Bitmap decodeFile(InputStream is,String uri){
-        Bitmap b = null;
-
-        //Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(is, null, o);
-
-        final int IMAGE_MAX_SIZE=2000;
-        int scale = 1;
-        if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
-            scale = (int)Math.pow(2, (int) Math.ceil(Math.log(IMAGE_MAX_SIZE /(double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
-        }
-
-        //Decode with inSampleSize
-        try {
-            is.close();
-            is = new java.net.URL(uri).openStream();
-        } catch(IOException e) {
-            //TODO: malformed url exception
-        }
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        o2.inJustDecodeBounds = false;
-        b = BitmapFactory.decodeStream(is, null, o2);
-
-        return b;
     }
 
 }

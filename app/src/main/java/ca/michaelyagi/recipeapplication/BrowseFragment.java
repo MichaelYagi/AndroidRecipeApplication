@@ -542,7 +542,7 @@ public class BrowseFragment extends Fragment {
             Bitmap imageBmp = null;
             try {
                 InputStream in = new java.net.URL(imageUrl).openStream();
-                imageBmp = BitmapFactory.decodeStream(in);
+                imageBmp = FileUtils.decodeFile(in,imageUrl);
             } catch (MalformedURLException e) {
                 try {
                     File file = new File(imageUrl);

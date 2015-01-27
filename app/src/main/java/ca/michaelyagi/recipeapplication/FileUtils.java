@@ -3,11 +3,16 @@ package ca.michaelyagi.recipeapplication;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 //AUTHOR: Paul Burke
 public class FileUtils {
@@ -150,5 +155,34 @@ public class FileUtils {
      */
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    }
+
+    public static Bitmap decodeFile(InputStream is,String uri){
+        Bitmap b = null;
+
+        //Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(is, null, o);
+
+        final int IMAGE_MAX_SIZE=2000;
+        int scale = 1;
+        if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
+            scale = (int)Math.pow(2, (int) Math.ceil(Math.log(IMAGE_MAX_SIZE /(double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+        }
+
+        //Decode with inSampleSize
+        try {
+            is.close();
+            is = new java.net.URL(uri).openStream();
+        } catch(IOException e) {
+            //TODO: malformed url exception
+        }
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        o2.inJustDecodeBounds = false;
+        b = BitmapFactory.decodeStream(is, null, o2);
+
+        return b;
     }
 }
