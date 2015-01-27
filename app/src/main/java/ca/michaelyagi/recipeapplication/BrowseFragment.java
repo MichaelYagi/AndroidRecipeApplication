@@ -144,7 +144,7 @@ public class BrowseFragment extends Fragment {
 
                 ((ListView) parent).setItemChecked(position, false);
 
-                mListener.showDrawerToggle(false);
+                //mListener.showDrawerToggle(false);
 
                 //Get Data at position selected
                 RecipeListData recipeData = (RecipeListData)parent.getItemAtPosition(position);
@@ -158,6 +158,7 @@ public class BrowseFragment extends Fragment {
                 Bundle args = new Bundle();
                 args.putInt("recipe_id", recipeData.getId());
                 args.putString("recipe_title",recipeData.getTitle());
+                args.putBoolean("recipe_ispublished", recipeData.isPublished);
                 args.putString("recipe_user",recipeData.getUser());
                 detailRecipeFragment.setArguments(args);
 
@@ -188,6 +189,9 @@ public class BrowseFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+
+        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+        shareItem.setVisible(false);
 
         MenuItem deleteRecipes = menu.findItem(R.id.menu_item_delete_recipes);
         deleteRecipes.setVisible(false);
@@ -352,9 +356,16 @@ public class BrowseFragment extends Fragment {
                                 d.isChecked = false;
                                 d.setTitle(jsonObj.get("title").toString());
                                 String draftText = "";
+
                                 if (!this.ShowOnlyPublished) {
                                     draftText = "DRAFT";
                                 }
+
+                                d.isPublished = false;
+                                if (jsonObj.getString("published").equals("1")) {
+                                    d.isPublished = true;
+                                }
+
                                 d.setDraft(draftText);
                                 d.setUser(jsonObj.get("user").toString());
                                 Integer serves = Integer.parseInt(jsonObj.get("serves").toString());
@@ -398,6 +409,11 @@ public class BrowseFragment extends Fragment {
                                         String draftText = "";
                                         if (!this.ShowOnlyPublished && !recipeObj.getString("published").equals("1")) {
                                             draftText = "DRAFT";
+                                        }
+
+                                        d.isPublished = false;
+                                        if (recipeObj.getString("published").equals("1")) {
+                                            d.isPublished = true;
                                         }
                                         d.setDraft(draftText);
                                         d.setUser(recipeObj.get("user").toString());
@@ -840,6 +856,7 @@ public class BrowseFragment extends Fragment {
     class RecipeListData {
         private int id;
         boolean isChecked;
+        boolean isPublished;
         private String title;
         private String draft;
         private String user;

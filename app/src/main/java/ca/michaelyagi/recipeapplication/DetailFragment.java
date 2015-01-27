@@ -34,6 +34,7 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
 
     private int recipeId;
     private String recipeUser;
+    private boolean recipeIsPublished;
 
     private int NUM_OF_TABS = 2;
 
@@ -45,7 +46,7 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
         rootView = (LinearLayout) inflater.inflate(R.layout.detail_tab_host,container, false);
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
 
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
 
         // update the actionbar to show the up carat
         ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -53,6 +54,7 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
         //Get arguments passed
         recipeId = getArguments().getInt("recipe_id");
         recipeUser = getArguments().getString("recipe_user");
+        recipeIsPublished = getArguments().getBoolean("recipe_ispublished");
 
         // Initilization
         viewPager = (ViewPager) rootView.findViewById(R.id.pager);
@@ -120,7 +122,6 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
         switch (item.getItemId()) {
             case android.R.id.home:
                 //called when the up carat in actionbar is pressed
-                getActivity().onBackPressed();
                 return true;
             //Share button
             case R.id.menu_item_share:
@@ -148,6 +149,7 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
             Bundle args = new Bundle();
             args.putInt("recipe_id", recipeId);
             args.putString("recipe_user",recipeUser);
+            args.putBoolean("recipe_ispublished",recipeIsPublished);
 
             switch (index) {
                 case 0:

@@ -77,6 +77,7 @@ public class RecipeImagesTabFragment extends Fragment {
 
     private int recipeId;
     private String recipeUser;
+    private boolean recipeIsPublished;
 
     private List<Bitmap> imageBmps = new ArrayList<Bitmap>();
     private ImageGalleryAdapter imageAdapter;
@@ -97,6 +98,7 @@ public class RecipeImagesTabFragment extends Fragment {
         //Get arguments passed
         recipeId = getArguments().getInt("recipe_id");
         recipeUser = getArguments().getString("recipe_user");
+        recipeIsPublished = getArguments().getBoolean("recipe_ispublished");
         imageBmps.clear();
 
         mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -118,7 +120,10 @@ public class RecipeImagesTabFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
 
         MenuItem shareItem = menu.findItem(R.id.menu_item_share);
-        shareItem.setVisible(true);
+        shareItem.setVisible(false);
+        if (recipeIsPublished) {
+            shareItem.setVisible(true);
+        }
 
         MenuItem editItem = menu.findItem(R.id.menu_edit);
         editItem.setVisible(false);
@@ -155,7 +160,7 @@ public class RecipeImagesTabFragment extends Fragment {
             //Edit a recipe
             case R.id.menu_edit:
 
-                fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
+                fragmentTransaction = getFragmentManager().beginTransaction();
 
                 EditRecipeFragment editFragment = new EditRecipeFragment();
 
@@ -262,7 +267,7 @@ public class RecipeImagesTabFragment extends Fragment {
                         Bundle args = new Bundle();
                         args.putBoolean("viewbyuser_filter", true);
 
-                        fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
+                        fragmentTransaction = getFragmentManager().beginTransaction();
                         BrowseFragment browseRecipeFragment;
                         browseRecipeFragment = new BrowseFragment();
                         browseRecipeFragment.setArguments(args);

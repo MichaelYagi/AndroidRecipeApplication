@@ -133,7 +133,7 @@ public class EditRecipeFragment extends Fragment {
         faActivity  = (FragmentActivity)    super.getActivity();
         llLayout    = (ScrollView)    inflater.inflate(R.layout.fragment_edit_recipe, container, false);
 
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
 
         Bundle args = getArguments();
         if (args == null) {
@@ -393,7 +393,7 @@ public class EditRecipeFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-System.out.print(item.toString());
+
         // Get item selected and deal with it
         switch (item.getItemId()) {
             case android.R.id.home:

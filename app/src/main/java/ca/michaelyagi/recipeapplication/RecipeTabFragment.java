@@ -62,6 +62,7 @@ public class RecipeTabFragment extends Fragment {
     private int recipeId;
     private String recipeUser;
     private String recipeTitle;
+    private boolean recipeIsPublished;
 
     /******************************************************************/
     // On create
@@ -74,6 +75,7 @@ public class RecipeTabFragment extends Fragment {
         //Get arguments passed
         recipeId = getArguments().getInt("recipe_id");
         recipeUser = getArguments().getString("recipe_user");
+        recipeIsPublished = getArguments().getBoolean("recipe_ispublished");
 
         //Override overflow menu so user can edit this recipe
         setHasOptionsMenu(true);
@@ -92,7 +94,10 @@ public class RecipeTabFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
 
         MenuItem shareItem = menu.findItem(R.id.menu_item_share);
-        shareItem.setVisible(true);
+        shareItem.setVisible(false);
+        if (recipeIsPublished) {
+            shareItem.setVisible(true);
+        }
 
         MenuItem editItem = menu.findItem(R.id.menu_edit);
         editItem.setVisible(false);
@@ -129,7 +134,7 @@ public class RecipeTabFragment extends Fragment {
             //Edit a recipe
             case R.id.menu_edit:
 
-                fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
+                fragmentTransaction = getFragmentManager().beginTransaction();
 
                 EditRecipeFragment editFragment = new EditRecipeFragment();
 
@@ -237,7 +242,7 @@ public class RecipeTabFragment extends Fragment {
                         Bundle args = new Bundle();
                         args.putBoolean("viewbyuser_filter", true);
 
-                        fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
+                        fragmentTransaction = getFragmentManager().beginTransaction();
                         BrowseFragment browseRecipeFragment;
                         browseRecipeFragment = new BrowseFragment();
                         browseRecipeFragment.setArguments(args);
@@ -494,7 +499,7 @@ public class RecipeTabFragment extends Fragment {
                 args.putBoolean("viewbyuser_filter", true);
                 args.putString("user",userStr);
 
-                fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
+                fragmentTransaction = getFragmentManager().beginTransaction();
                 BrowseFragment browseRecipeFragment = new BrowseFragment();
                 browseRecipeFragment.setArguments(args);
                 fragmentTransaction.replace(R.id.content_frame, browseRecipeFragment);
@@ -625,7 +630,7 @@ public class RecipeTabFragment extends Fragment {
                         args.putBoolean("viewbytag_filter", true);
                         args.putString("keyword",tagObjStr);
 
-                        fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
+                        fragmentTransaction = getFragmentManager().beginTransaction();
                         BrowseFragment browseRecipeFragment = new BrowseFragment();
                         browseRecipeFragment.setArguments(args);
                         fragmentTransaction.replace(R.id.content_frame, browseRecipeFragment);
