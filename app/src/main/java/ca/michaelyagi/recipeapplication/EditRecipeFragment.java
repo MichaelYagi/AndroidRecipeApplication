@@ -323,21 +323,7 @@ public class EditRecipeFragment extends Fragment {
                     clearKeyboard();
 
                     if (counter == 0) {
-                        FragmentManager fragmentManager = getFragmentManager();
-
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                        DetailFragment detailRecipeFragment;
-                        detailRecipeFragment = new DetailFragment();
-
-                        Bundle args = new Bundle();
-                        args.putInt("recipe_id", recipeId);
-                        args.putString("recipe_user",SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
-                        detailRecipeFragment.setArguments(args);
-
-                        fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
+                        getFragmentManager().popBackStack();
                     }
                 }
 
@@ -755,21 +741,7 @@ System.out.print(item.toString());
                             }
                         }
                         if (counter == 0) {
-                            FragmentManager fragmentManager = getFragmentManager();
-
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                            DetailFragment detailRecipeFragment;
-                            detailRecipeFragment = new DetailFragment();
-
-                            Bundle args = new Bundle();
-                            args.putInt("recipe_id", recipeId);
-                            args.putString("recipe_user", SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
-                            detailRecipeFragment.setArguments(args);
-
-                            fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
-                            fragmentTransaction.addToBackStack(null);
-                            fragmentTransaction.commit();
+                            getFragmentManager().popBackStack();
                         }
                     }
 
@@ -962,21 +934,7 @@ System.out.print(item.toString());
             }
 
             if (isLastImage) {
-                FragmentManager fragmentManager = getFragmentManager();
-
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                DetailFragment detailRecipeFragment;
-                detailRecipeFragment = new DetailFragment();
-
-                Bundle args = new Bundle();
-                args.putInt("recipe_id", recipeId);
-                args.putString("recipe_user",SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
-                detailRecipeFragment.setArguments(args);
-
-                fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                getFragmentManager().popBackStack();
             }
         }
     }
@@ -1063,21 +1021,7 @@ System.out.print(item.toString());
             }
 
             if (isLastImage) {
-                FragmentManager fragmentManager = getFragmentManager();
-
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                DetailFragment detailRecipeFragment;
-                detailRecipeFragment = new DetailFragment();
-
-                Bundle args = new Bundle();
-                args.putInt("recipe_id", recipeId);
-                args.putString("recipe_user",SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()));
-                detailRecipeFragment.setArguments(args);
-
-                fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                getFragmentManager().popBackStack();
             }
         }
     }
