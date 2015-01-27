@@ -5,9 +5,11 @@ package ca.michaelyagi.recipeapplication;
 /******************************************************************/
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -28,6 +30,7 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
+    private LinearLayout rootView;
 
     private int recipeId;
     private String recipeUser;
@@ -39,7 +42,7 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
     /******************************************************************/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        LinearLayout rootView = (LinearLayout) inflater.inflate(R.layout.detail_tab_host,container, false);
+        rootView = (LinearLayout) inflater.inflate(R.layout.detail_tab_host,container, false);
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
 
         setHasOptionsMenu(true);
@@ -104,6 +107,14 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
     }
 
     @Override
+    public void onDestroyView() {
+        actionBar.removeAllTabs();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+        super.onDestroyView();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Get item selected and deal with it
         switch (item.getItemId()) {
@@ -125,7 +136,7 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
         return true;
     }
 
-    public class TabsPagerAdapter extends FragmentPagerAdapter {
+    public class TabsPagerAdapter extends FragmentStatePagerAdapter {
 
         public TabsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -149,6 +160,11 @@ public class DetailFragment extends Fragment implements ActionBar.TabListener {
                     return recipeImageFragment;
             }
 
+            return null;
+        }
+
+        @Override
+        public Parcelable saveState() {
             return null;
         }
 
