@@ -4,6 +4,7 @@ package ca.michaelyagi.recipeapplication;
 // Display's a recipe. User can choose to Edit or Delete recipe
 /******************************************************************/
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -69,7 +70,7 @@ public class RecipeTabFragment extends Fragment {
     /******************************************************************/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        svLayout    = (ScrollView)    inflater.inflate(R.layout.fragment_recipe_detail, container, false);
+        svLayout = (ScrollView) inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
 
         //Get arguments passed
@@ -134,7 +135,9 @@ public class RecipeTabFragment extends Fragment {
             //Edit a recipe
             case R.id.menu_edit:
 
-                fragmentTransaction = getFragmentManager().beginTransaction();
+                mListener.showDrawerToggle(false);
+
+                fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
 
                 EditRecipeFragment editFragment = new EditRecipeFragment();
 
@@ -170,6 +173,22 @@ public class RecipeTabFragment extends Fragment {
         }
 
         return true;
+    }
+
+    public interface OnFragmentInteractionListener {
+        public void showDrawerToggle(boolean showDrawerToggle);
+    }
+
+    private OnFragmentInteractionListener mListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            this.mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+        }
     }
 
     /******************************************************************/
@@ -242,7 +261,7 @@ public class RecipeTabFragment extends Fragment {
                         Bundle args = new Bundle();
                         args.putBoolean("viewbyuser_filter", true);
 
-                        fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
                         BrowseFragment browseRecipeFragment;
                         browseRecipeFragment = new BrowseFragment();
                         browseRecipeFragment.setArguments(args);
@@ -499,7 +518,7 @@ public class RecipeTabFragment extends Fragment {
                 args.putBoolean("viewbyuser_filter", true);
                 args.putString("user",userStr);
 
-                fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
                 BrowseFragment browseRecipeFragment = new BrowseFragment();
                 browseRecipeFragment.setArguments(args);
                 fragmentTransaction.replace(R.id.content_frame, browseRecipeFragment);
@@ -630,7 +649,7 @@ public class RecipeTabFragment extends Fragment {
                         args.putBoolean("viewbytag_filter", true);
                         args.putString("keyword",tagObjStr);
 
-                        fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
                         BrowseFragment browseRecipeFragment = new BrowseFragment();
                         browseRecipeFragment.setArguments(args);
                         fragmentTransaction.replace(R.id.content_frame, browseRecipeFragment);

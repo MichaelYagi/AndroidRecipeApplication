@@ -160,7 +160,7 @@ public class RecipeImagesTabFragment extends Fragment {
             //Edit a recipe
             case R.id.menu_edit:
 
-                fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
 
                 EditRecipeFragment editFragment = new EditRecipeFragment();
 
@@ -267,7 +267,7 @@ public class RecipeImagesTabFragment extends Fragment {
                         Bundle args = new Bundle();
                         args.putBoolean("viewbyuser_filter", true);
 
-                        fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction = getParentFragment().getFragmentManager().beginTransaction();
                         BrowseFragment browseRecipeFragment;
                         browseRecipeFragment = new BrowseFragment();
                         browseRecipeFragment.setArguments(args);

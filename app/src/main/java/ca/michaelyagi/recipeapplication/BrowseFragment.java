@@ -144,7 +144,7 @@ public class BrowseFragment extends Fragment {
 
                 ((ListView) parent).setItemChecked(position, false);
 
-                //mListener.showDrawerToggle(false);
+                mListener.showDrawerToggle(false);
 
                 //Get Data at position selected
                 RecipeListData recipeData = (RecipeListData)parent.getItemAtPosition(position);

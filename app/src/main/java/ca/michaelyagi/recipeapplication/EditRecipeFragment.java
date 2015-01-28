@@ -133,7 +133,7 @@ public class EditRecipeFragment extends Fragment {
         faActivity  = (FragmentActivity)    super.getActivity();
         llLayout    = (ScrollView)    inflater.inflate(R.layout.fragment_edit_recipe, container, false);
 
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
 
         Bundle args = getArguments();
         if (args == null) {

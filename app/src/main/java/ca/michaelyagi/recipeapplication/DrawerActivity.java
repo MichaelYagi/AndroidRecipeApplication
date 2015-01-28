@@ -57,7 +57,7 @@ import java.util.List;
 /**
  * Created by Michael on 12/27/2014.
  */
-public class DrawerActivity extends ActionBarActivity implements BrowseFragment.OnFragmentInteractionListener,LoginFragment.OnFragmentInteractionListener,RegisterFragment.OnFragmentInteractionListener {
+public class DrawerActivity extends ActionBarActivity implements BrowseFragment.OnFragmentInteractionListener,LoginFragment.OnFragmentInteractionListener,RegisterFragment.OnFragmentInteractionListener,RecipeTabFragment.OnFragmentInteractionListener {
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     DrawerAdapter drawerListAdapter;
