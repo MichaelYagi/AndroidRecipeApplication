@@ -127,7 +127,6 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         drawerLayout.setDrawerListener(drawerToggle);
 
         drawerList = (ListView) findViewById(R.id.left_drawer);
-        highlightDrawerItem(1);
 
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -136,6 +135,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         drawerListAdapter = new DrawerAdapter(getSupportActionBar().getThemedContext(),R.layout.drawer_list_item,drawerItems);
         // Set the ArrayAdapter as the ListView's adapter.
         drawerList.setAdapter(drawerListAdapter);
+        highlightDrawerItem(1);
 
         LayoutInflater inflater = getLayoutInflater();
         final ViewGroup drawerHeader = (ViewGroup) inflater.inflate(R.layout.drawer_list_header,drawerList,false);
@@ -158,9 +158,15 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
 
         drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.open_drawer,R.string.close_drawer) {
 
-            public void onDrawerStateChanged(int newState) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                if (slideOffset != 0) {
+                    drawerList.getChildAt(LAST_DRAWER_HIGHLIGHT_POSITION).setBackgroundColor(getResources().getColor(R.color.deepbluesea_5));
+                }
+                super.onDrawerSlide(drawerView, slideOffset);
+            }
 
-                highlightDrawerItem(LAST_DRAWER_HIGHLIGHT_POSITION);
+            public void onDrawerStateChanged(int newState) {
 
                 //Set Drawer header
                 TextView headerUser = (TextView) drawerHeader.findViewById(R.id.header_user);
@@ -187,7 +193,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
 
             }
 
-            public void onDrawerClosed(View view) {
+            public void onDrawerClosed(View drawerView) {
                 ActivityCompat.invalidateOptionsMenu(DrawerActivity.this);
             }
 
@@ -227,9 +233,10 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
     }
 
     public void highlightDrawerItem(int row) {
+        if (LAST_DRAWER_HIGHLIGHT_POSITION != row && drawerList.getChildAt(LAST_DRAWER_HIGHLIGHT_POSITION) != null) {
+            drawerList.getChildAt(LAST_DRAWER_HIGHLIGHT_POSITION).setBackgroundColor(getResources().getColor(R.color.drawer_background));
+        }
         LAST_DRAWER_HIGHLIGHT_POSITION = row;
-        drawerList.setItemChecked(row, true);
-        drawerList.setSelection(row);
     }
 
     /******************************************************************/
@@ -463,8 +470,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            LAST_DRAWER_HIGHLIGHT_POSITION = position;
-            selectItem(LAST_DRAWER_HIGHLIGHT_POSITION);
+            selectItem(position);
         }
     }
 
@@ -617,6 +623,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         private final Context context;
         private final List<DrawerListData> data;
         private final int layoutResourceId;
+        private int selected;
 
         public DrawerAdapter(Context context, int layoutResourceId, List<DrawerListData> data) {
             super(context, layoutResourceId, data);
