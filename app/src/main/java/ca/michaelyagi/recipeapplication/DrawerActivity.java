@@ -80,6 +80,7 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.color.actionbar_background));
 
         //Initial drawer items
         DrawerListData d;
@@ -161,7 +162,8 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (slideOffset != 0) {
-                    drawerList.getChildAt(LAST_DRAWER_HIGHLIGHT_POSITION).setBackgroundColor(getResources().getColor(R.color.deepbluesea_5));
+                    drawerList.getChildAt(LAST_DRAWER_HIGHLIGHT_POSITION).setBackgroundColor(getResources().getColor(R.color.drawer_highlight));
+                    drawerListAdapter.setSelected(LAST_DRAWER_HIGHLIGHT_POSITION);
                 }
                 super.onDrawerSlide(drawerView, slideOffset);
             }
@@ -632,6 +634,11 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
             this.layoutResourceId = layoutResourceId;
         }
 
+        public void setSelected(int selected) {
+            this.selected = selected;
+            notifyDataSetChanged();
+        }
+
         private class ViewHolder {
             ImageView drawerIcon;
             TextView drawerText;
@@ -655,6 +662,14 @@ public class DrawerActivity extends ActionBarActivity implements BrowseFragment.
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
+            }
+
+            if ((position+1) == selected) {
+                holder.drawerText.setTextColor(getResources().getColor(R.color.drawer_text_highlight));
+                holder.drawerIcon.setColorFilter(getResources().getColor(R.color.drawer_text_highlight));
+            } else {
+                holder.drawerText.setTextColor(Color.DKGRAY);
+                holder.drawerIcon.setColorFilter(Color.DKGRAY);
             }
 
             holder.drawerText.setText(rowItem.getDrawerItemText());
