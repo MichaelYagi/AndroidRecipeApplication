@@ -70,19 +70,26 @@ public class RecipeTabFragment extends Fragment {
     /******************************************************************/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        svLayout = (ScrollView) inflater.inflate(R.layout.fragment_recipe_detail, container, false);
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
 
-        //Get arguments passed
-        recipeId = getArguments().getInt("recipe_id");
-        recipeUser = getArguments().getString("recipe_user");
-        recipeIsPublished = getArguments().getBoolean("recipe_ispublished");
+        if (svLayout == null) {
+            svLayout = (ScrollView) inflater.inflate(R.layout.fragment_recipe_detail, container, false);
 
-        //Override overflow menu so user can edit this recipe
-        setHasOptionsMenu(true);
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
 
-        //Make GET request to see this recipe
-        new GetRecipeRequestTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
+            //Get arguments passed
+            recipeId = getArguments().getInt("recipe_id");
+            recipeUser = getArguments().getString("recipe_user");
+            recipeIsPublished = getArguments().getBoolean("recipe_ispublished");
+
+            //Override overflow menu so user can edit this recipe
+            setHasOptionsMenu(true);
+
+            //Make GET request to see this recipe
+            new GetRecipeRequestTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
+
+        } else {
+            ((ViewGroup) svLayout.getParent()).removeView(svLayout);
+        }
 
         return svLayout;
     }
