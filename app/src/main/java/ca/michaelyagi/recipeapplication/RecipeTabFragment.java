@@ -597,28 +597,34 @@ public class RecipeTabFragment extends Fragment {
 
         //Times and serving
         String servingStr = Integer.toString(recipeData.serves);
+        TextView servingText = (TextView)svLayout.findViewById(R.id.servesTextView);
+        servingText.setVisibility(View.GONE);
         if(servingStr != null && !servingStr.isEmpty() && recipeData.serves > 0) {
             servingStr = "Serves: " + servingStr;
-            TextView servingText = (TextView)svLayout.findViewById(R.id.servesTextView);
+            servingText.setVisibility(View.VISIBLE);
             servingText.setText(servingStr);
         }
 
         //Prep
+        TextView prepText = (TextView)svLayout.findViewById(R.id.prepTextView);
+        prepText.setVisibility(View.GONE);
         if(recipeData.prepTime != null && !recipeData.prepTime.isEmpty() && !recipeData.prepTime.equals("00:00:00")) {
             String prepStr = recipeData.prepTime;
             prepStr = prepStr.substring(0, prepStr.length() - 3);
             prepStr = "Prep Time: " + prepStr;
-            TextView prepText = (TextView)svLayout.findViewById(R.id.prepTextView);
+            prepText.setVisibility(View.VISIBLE);
             prepText.setText(prepStr);
         }
 
         //Cooking
+        TextView cookText = (TextView)svLayout.findViewById(R.id.cookTextView);
+        cookText.setVisibility(View.GONE);
         if(recipeData.cookTime != null && !recipeData.cookTime.isEmpty() && !recipeData.cookTime.equals("00:00:00")) {
             String cookStr = recipeData.cookTime;
             cookStr = cookStr.substring(0, cookStr.length() - 3);
             cookStr = "Cook Time: " + cookStr;
-            TextView prepText = (TextView)svLayout.findViewById(R.id.cookTextView);
-            prepText.setText(cookStr);
+            cookText.setVisibility(View.VISIBLE);
+            cookText.setText(cookStr);
         };
 
         //Set the tag list
