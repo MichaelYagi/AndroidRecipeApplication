@@ -1,8 +1,12 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <item name="android:colorPrimary">@color/actionbar_background</item>
+    </style>
+    <style name="ActionBarTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@color/actionbar_background</item>
     </style>
     <style name="ProgressSpinnerTheme" parent="android:Theme.Holo.Dialog">
         <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
