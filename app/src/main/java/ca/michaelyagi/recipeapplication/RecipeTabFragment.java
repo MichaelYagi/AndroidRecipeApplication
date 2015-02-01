@@ -640,7 +640,7 @@ public class RecipeTabFragment extends Fragment {
                 final String tagObjStr = tagIt.next();
 
                 tagText = new TextView(super.getActivity().getApplicationContext());
-                tagText.setTextColor(Color.parseColor("#009688"));
+                tagText.setTextColor(getResources().getColor(R.color.link_color));
                 tagText.setPaintFlags( paint.getFlags());
 
                 tagText.setText(Html.fromHtml(tagObjStr));

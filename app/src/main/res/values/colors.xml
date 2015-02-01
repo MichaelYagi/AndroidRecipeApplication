@@ -7,6 +7,7 @@
     <color name="deepbluesea_3">#234567</color>
     <color name="deepbluesea_4">#345678</color>
     <color name="deepbluesea_5">#456789</color>
+    <color name="link_color">#009688</color>
     <color name="actionbar_background">#336699</color>
     <color name="drawer_text_highlight">#336699</color>
     <color name="drawer_highlight">#EEEEEE</color>

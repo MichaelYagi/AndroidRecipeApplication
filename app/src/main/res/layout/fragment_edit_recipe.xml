@@ -34,6 +34,9 @@
             android:id="@+id/recipe_add_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/link_color"
             android:layout_above="@+id/recipe_ingredients"
             android:onClick="onClickAddImage"
             android:text="Add Image"
@@ -90,7 +93,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClickAddIngredient"
-            android:text="@string/add_button"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/link_color"
+            android:text="Add Ingredient"
             android:layout_marginBottom="15dp"
             android:layout_above="@+id/recipe_steps"
             android:layout_alignLeft="@+id/recipe_add_step_button"
@@ -123,10 +129,12 @@
             android:id="@+id/recipe_add_step_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textColor="@color/link_color"
             android:onClick="onClickAddStep"
             android:layout_above="@+id/recipe_serves"
             android:layout_marginBottom="15dp"
-            android:text="@string/add_button"
+            android:text="Add Step"
             android:layout_alignLeft="@+id/recipe_cook"
             android:layout_alignStart="@+id/recipe_cook" />
 
@@ -184,10 +192,12 @@
             android:id="@+id/publish_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOn="Published"
+            android:background="@android:color/transparent"
+            android:textColor="@color/link_color"
+            android:textOn="Publish"
             android:textOff="Draft"
             android:layout_above="@+id/save_recipe"
-            android:layout_gravity="left" />
+            android:layout_gravity="center" />
 
         <Button
             android:id="@+id/save_recipe"
