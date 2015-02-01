@@ -778,9 +778,7 @@ public class EditRecipeFragment extends Fragment {
                                 fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
-                            } else {
-                                getFragmentManager().popBackStack();
-                            }
+                            } 
                         }
                     }
 
