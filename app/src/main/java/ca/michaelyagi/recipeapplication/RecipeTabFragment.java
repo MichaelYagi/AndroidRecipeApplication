@@ -302,14 +302,6 @@ public class RecipeTabFragment extends Fragment {
     //GET recipe details
     class GetRecipeRequestTask extends AsyncTask<String, String, String> {
 
-        private ProgressDialog dialog;
-
-        @Override
-        protected void onPreExecute() {
-            dialog = Utils.createProgressDialog(getActivity());
-            dialog.show();
-        }
-
         @Override
         protected String doInBackground(String... uri) {
             HttpClient httpclient = new DefaultHttpClient();
@@ -487,10 +479,6 @@ public class RecipeTabFragment extends Fragment {
             } else {
                 Toast.makeText(svLayout.getContext(), "Connection Error...", Toast.LENGTH_SHORT).show();
                 Utils.reconnectDialog(getActivity());
-            }
-
-            if (dialog.isShowing()) {
-                dialog.dismiss();
             }
         }
     }
