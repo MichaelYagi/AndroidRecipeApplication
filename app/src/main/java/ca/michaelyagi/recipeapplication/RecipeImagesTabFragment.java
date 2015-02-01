@@ -93,7 +93,7 @@ public class RecipeImagesTabFragment extends Fragment {
     /******************************************************************/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        if (svLayout == null) {
+        //if (svLayout == null) {
             svLayout = (ScrollView) inflater.inflate(R.layout.fragment_recipe_images_detail, container, false);
 
             //Get arguments passed
@@ -110,9 +110,9 @@ public class RecipeImagesTabFragment extends Fragment {
             //Make GET request to see this recipe
             new GetRecipeRequestTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
 
-        } else {
-            ((ViewGroup) svLayout.getParent()).removeView(svLayout);
-        }
+        //} else {
+        //    ((ViewGroup) svLayout.getParent()).removeView(svLayout);
+        //}
 
         return svLayout;
     }

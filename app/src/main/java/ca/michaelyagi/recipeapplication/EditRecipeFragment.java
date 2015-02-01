@@ -94,6 +94,7 @@ public class EditRecipeFragment extends Fragment {
     private int recipeId;
     private String recipeUser;
     private String recipeTitle;
+    private boolean isPublished;
 
     private ScrollView llLayout;
     private FragmentActivity faActivity;
@@ -700,6 +701,7 @@ public class EditRecipeFragment extends Fragment {
 
                     //If request was successful
                     boolean updateSuccess = false;
+                    isPublished = Boolean.getBoolean(recipeObj.get("published").toString());
                     if (recipeId > 0) {
                         if (!jsonObj.getString("user").equals(SaveSharedPreference.getUsername(RecipeBookApplication.getAppContext()))) {
                             Toast.makeText(llLayout.getContext(), "Error Updating Recipe...", Toast.LENGTH_SHORT).show();
@@ -1416,7 +1418,7 @@ public class EditRecipeFragment extends Fragment {
     // Add EditText boxes and images dynamically
     /******************************************************************/
     //Add a new image and remove button
-    private void addNewImageRow(String imagePath,boolean isNewImage) {
+    private void addNewImageRow(String imagePath, final boolean isNewImage) {
 
         LinearLayout ll = (LinearLayout) faActivity.findViewById(R.id.recipe_images);
         String temp;
@@ -1457,15 +1459,21 @@ public class EditRecipeFragment extends Fragment {
 
                     recipeImageView = (ImageView) llLayout.findViewWithTag("recipe_image_" + idNumber);
                     recipeImageView.setVisibility(WebView.GONE);
+                    newll.removeView(recipeImageView);
                     recipeImageView = null;
+
                     removeButton = (Button) llLayout.findViewWithTag("recipe_image_remove_" + idNumber);
                     removeButton.setVisibility(Button.GONE);
+                    newll.removeView(removeButton);
                     removeButton = null;
 
                     //Set flags
                     for (RecipeImageView iView : imageViewList) {
-                        if (iView.viewId == Integer.parseInt(idNumber)) {
+                        if (iView.viewId == Integer.parseInt(idNumber) && !iView.newImage) {
                             iView.removeFlag = true;
+                            break;
+                        } else if (iView.newImage) {
+                            imageViewList.remove(iView);
                             break;
                         }
                     }

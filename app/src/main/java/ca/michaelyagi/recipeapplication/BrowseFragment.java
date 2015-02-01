@@ -162,8 +162,8 @@ public class BrowseFragment extends Fragment {
                 args.putString("recipe_user",recipeData.getUser());
                 detailRecipeFragment.setArguments(args);
 
-                fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
-                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment,"detailFragmentTag");
+                fragmentTransaction.addToBackStack("detailFragmentTag");
                 fragmentTransaction.commit();
             }
         });

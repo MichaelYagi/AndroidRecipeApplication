@@ -71,7 +71,8 @@ public class RecipeTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
-        if (svLayout == null) {
+        //Load fragment if layout is null
+        //if (svLayout == null) {
             svLayout = (ScrollView) inflater.inflate(R.layout.fragment_recipe_detail, container, false);
 
             ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
@@ -87,9 +88,9 @@ public class RecipeTabFragment extends Fragment {
             //Make GET request to see this recipe
             new GetRecipeRequestTask().execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
 
-        } else {
-            ((ViewGroup) svLayout.getParent()).removeView(svLayout);
-        }
+        //} else {
+        //    ((ViewGroup) svLayout.getParent()).removeView(svLayout);
+        //}
 
         return svLayout;
     }
