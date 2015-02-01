@@ -95,6 +95,7 @@ public class EditRecipeFragment extends Fragment {
     private String recipeUser;
     private String recipeTitle;
     private boolean isPublished;
+    private boolean isNewRecipe;
 
     private ScrollView llLayout;
     private FragmentActivity faActivity;
@@ -287,13 +288,13 @@ public class EditRecipeFragment extends Fragment {
                     //Prepare JSON for recipe for REST call
                     JSONObject jsonRecipeObj = getJsonRecipe();
 
-                    boolean isNewRecipe = false;
+                    isNewRecipe = false;
                     AsyncTask uploadRecipeTask;
                     if (recipeId > 0) {
-                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj,isNewRecipe).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
+                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe/" + recipeId);
                     } else {
                         isNewRecipe = true;
-                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj,isNewRecipe).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe");
+                        uploadRecipeTask = new UploadRecipeTask(jsonRecipeObj).execute(SaveSharedPreference.getApiServer(RecipeBookApplication.getAppContext()) + "/api/v1/json/recipe");
                     }
 
                     //Image Handling
@@ -324,7 +325,26 @@ public class EditRecipeFragment extends Fragment {
                     clearKeyboard();
 
                     if (counter == 0) {
-                        getFragmentManager().popBackStack();
+                        if (isNewRecipe) {
+
+                            FragmentManager fragmentManager = getFragmentManager();
+
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                            DetailFragment detailRecipeFragment = new DetailFragment();
+
+                            Bundle args = new Bundle();
+                            args.putInt("recipe_id", recipeId);
+                            args.putBoolean("recipe_ispublished", isPublished);
+                            args.putString("recipe_user",recipeUser);
+                            detailRecipeFragment.setArguments(args);
+
+                            fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                        } else {
+                            getFragmentManager().popBackStack();
+                        }
                     }
                 }
 
@@ -630,7 +650,6 @@ public class EditRecipeFragment extends Fragment {
     class UploadRecipeTask extends AsyncTask<String, String, String> {
 
         JSONObject recipeObj;
-        boolean isNewRecipe;
         private ProgressDialog dialog;
 
         @Override
@@ -639,9 +658,8 @@ public class EditRecipeFragment extends Fragment {
             dialog.show();
         }
 
-        public UploadRecipeTask(JSONObject recipeJsonObj,boolean isNewRecipe) {
+        public UploadRecipeTask(JSONObject recipeJsonObj) {
             this.recipeObj = recipeJsonObj;
-            this.isNewRecipe = isNewRecipe;
         }
 
         @Override
@@ -743,7 +761,26 @@ public class EditRecipeFragment extends Fragment {
                             }
                         }
                         if (counter == 0) {
-                            getFragmentManager().popBackStack();
+                            if (isNewRecipe) {
+
+                                FragmentManager fragmentManager = getFragmentManager();
+
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                                DetailFragment detailRecipeFragment = new DetailFragment();
+
+                                Bundle args = new Bundle();
+                                args.putInt("recipe_id", recipeId);
+                                args.putBoolean("recipe_ispublished", isPublished);
+                                args.putString("recipe_user",recipeUser);
+                                detailRecipeFragment.setArguments(args);
+
+                                fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                            } else {
+                                getFragmentManager().popBackStack();
+                            }
                         }
                     }
 
@@ -936,7 +973,26 @@ public class EditRecipeFragment extends Fragment {
             }
 
             if (isLastImage) {
-                getFragmentManager().popBackStack();
+                if (isNewRecipe) {
+
+                    FragmentManager fragmentManager = getFragmentManager();
+
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                    DetailFragment detailRecipeFragment = new DetailFragment();
+
+                    Bundle args = new Bundle();
+                    args.putInt("recipe_id", recipeId);
+                    args.putBoolean("recipe_ispublished", isPublished);
+                    args.putString("recipe_user",recipeUser);
+                    detailRecipeFragment.setArguments(args);
+
+                    fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                } else {
+                    getFragmentManager().popBackStack();
+                }
             }
         }
     }
@@ -1023,7 +1079,26 @@ public class EditRecipeFragment extends Fragment {
             }
 
             if (isLastImage) {
-                getFragmentManager().popBackStack();
+                if (isNewRecipe) {
+
+                    FragmentManager fragmentManager = getFragmentManager();
+
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                    DetailFragment detailRecipeFragment = new DetailFragment();
+
+                    Bundle args = new Bundle();
+                    args.putInt("recipe_id", recipeId);
+                    args.putBoolean("recipe_ispublished", isPublished);
+                    args.putString("recipe_user",recipeUser);
+                    detailRecipeFragment.setArguments(args);
+
+                    fragmentTransaction.replace(R.id.content_frame, detailRecipeFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                } else {
+                    getFragmentManager().popBackStack();
+                }
             }
         }
     }
